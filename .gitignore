@@ -32,6 +32,10 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+lib/token_trusttunnel.txt
+.env
+*.env
+lib/main.dart
 
 # Symbolication related
 app.*.symbols
