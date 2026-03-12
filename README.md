@@ -23,12 +23,12 @@
 
 ## Поддерживаемые платформы
 
-- Android
-- iOS
-- Linux (desktop)
-- Windows (desktop)
+- Android  
+- iOS  
+- Linux (desktop)  
+- Windows (desktop)  
 
-Поддержка конкретных версий ОС и архитектур может отличаться и зависит от ограничений Flutter и сторонних зависимостей [web:621][web:620].
+Поддержка конкретных версий ОС и архитектур может отличаться и зависит от ограничений Flutter и сторонних зависимостей.
 
 ---
 
@@ -66,7 +66,7 @@ iOS (на macOS):
 
 bash
 flutter run -d ios
-Конфигурация VPN/секретов
+Конфигурация VPN и секретов
 Проект не должен содержать реальные токены, ключи и конфигурации для доступа к коммерческому VPN.
 
 Рекомендуемый подход:
@@ -112,21 +112,23 @@ android/, ios/, linux/, windows/, macos/ – стандартная структ
 Локализация интерфейса.
 
 Лицензия
-Apache-2.0
+Проект распространяется на условиях лицензии Apache‑2.0, см. файл LICENSE в корне репозитория.
 
 Отказ от ответственности
 SPIC является клиентом для подключения к стороннему коммерческому VPN‑сервису.
 Автор репозитория не несёт ответственности за использование сервиса и соблюдение законодательства в конкретной юрисдикции.
-## Getting Started
 
+Getting Started (Flutter boilerplate)
 This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+Learn Flutter
+
+Write your first Flutter app
+
+Flutter learning resources
 
 For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
+online documentation, which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
