@@ -32,13 +32,11 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+
+# Local secrets / конфиги
 lib/token_trusttunnel.txt
 .env
 *.env
-
-# lib/main.dart
-lib/feature/app/spic_app.dart;
-lib/feature/home/spic_home_screen.dart.
 
 # Symbolication related
 app.*.symbols
