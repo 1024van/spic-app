@@ -33,6 +33,11 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# Local secrets / конфиги
+lib/token_trusttunnel.txt
+.env
+*.env
+
 # Symbolication related
 app.*.symbols
 
