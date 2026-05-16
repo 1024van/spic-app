@@ -1,45 +1,33 @@
-// lib/main.dart
 import 'dart:async';
 
-import 'package:flutter/material.dart' hide Router;
 import 'package:flutter/material.dart';
-
-// TrustTunnel DI + репозитории + VPN-слой
 import 'package:trusttunnel/di/model/initialization_helper.dart';
 import 'package:trusttunnel/di/widgets/dependency_scope.dart';
-import 'package:trusttunnel/feature/routing/routing/widgets/scope/routing_scope.dart';
-import 'package:trusttunnel/feature/server/servers/widget/scope/servers_scope.dart';
-import 'package:trusttunnel/feature/settings/excluded_routes/widgets/scope/excluded_routes_scope.dart';
-import 'package:trusttunnel/feature/vpn/widgets/vpn_scope.dart';
 
-// Твой корневой виджет SPIC
-import 'package:spic_app/feature/app/spic_app.dart';
+import 'feature/app/spic_app.dart';
 
-void main() => runZonedGuarded(
-      () async {
-        final initializationResult = await InitializationHelperIo().init();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-        runApp(
-          DependencyScope(
-            dependenciesFactory: initializationResult.dependenciesFactory,
-            repositoryFactory: initializationResult.repositoryFactory,
-            child: ServersScope(
-              child: RoutingScope(
-                child: ExcludedRoutesScope(
-                  child: VpnScope(
-                    vpnRepository:
-                        initializationResult.repositoryFactory.vpnRepository,
-                    initialState: initializationResult.initialVpnState,
-                    child: const SpicApp(),
-                  ),
-                ),
-              ),
-            ),
+  await runZonedGuarded<Future<void>>(
+    () async {
+      final initResult = await InitializationHelperIo().init();
+
+      runApp(
+        DependencyScope(
+          dependenciesFactory: initResult.dependenciesFactory,
+          repositoryFactory: initResult.repositoryFactory,
+          child: SpicApp(
+            vpnRepository: initResult.repositoryFactory.vpnRepository,
+            initialVpnState: initResult.initialVpnState,
           ),
-        );
-      },
-      (error, stackTrace) {
-        // ignore: avoid_print
-        print('Error caught in root zone: $error');
-      },
-    );
+        ),
+      );
+    },
+    (error, stackTrace) {
+      // TODO: add logging
+      debugPrint('Unhandled error: $error');
+      debugPrintStack(stackTrace: stackTrace);
+    },
+  );
+}

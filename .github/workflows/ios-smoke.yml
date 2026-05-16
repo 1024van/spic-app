@@ -1,0 +1,84 @@
+name: iOS smoke build
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/ios-smoke.yml"
+      - "ios/**"
+      - "lib/**"
+      - "pubspec.yaml"
+      - "pubspec.lock"
+      - "tool/ci/**"
+
+jobs:
+  smoke:
+    name: flutter pub get, pod install, xcodebuild
+    runs-on: macos-15
+    timeout-minutes: 45
+
+    env:
+      TRUSTTUNNEL_REF: 2808c0efc20698d8ac3778fb1a98c005fa5b2c70
+      TRUSTTUNNEL_PATCH: tool/ci/trusttunnel_spic_2808c0ef.patch
+      GPR_KEY: ${{ secrets.GPR_KEY }}
+
+    steps:
+      - name: Checkout SPIC
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.41.7"
+          channel: stable
+          cache: true
+
+      - name: Checkout TrustTunnel dependency
+        run: |
+          set -euo pipefail
+          rm -rf ../../TrustTunnelFlutterClient
+          git clone https://github.com/TrustTunnel/TrustTunnelFlutterClient.git ../../TrustTunnelFlutterClient
+          git -C ../../TrustTunnelFlutterClient checkout "$TRUSTTUNNEL_REF"
+          git -C ../../TrustTunnelFlutterClient apply --whitespace=nowarn "$GITHUB_WORKSPACE/$TRUSTTUNNEL_PATCH"
+
+      - name: Generate TrustTunnel sources
+        run: |
+          set -euo pipefail
+          cd ../../TrustTunnelFlutterClient
+          flutter pub get
+          dart run intl_utils:generate
+          dart run build_runner build --delete-conflicting-outputs
+          cd plugins/vpn_plugin
+          flutter pub get
+          dart run pigeon \
+            --input pigeons/platform_api.dart \
+            --swift_out ios/Classes/PlatformApi.g.swift \
+            --kotlin_out android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/PlatformApi.g.kt \
+            --dart_out lib/platform_api.g.dart
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Pod install
+        run: |
+          set -euo pipefail
+          if [ -z "${GPR_KEY:-}" ]; then
+            echo "::error::GPR_KEY secret is required for TrustTunnelClient pod access"
+            exit 1
+          fi
+          cd ios
+          pod install --repo-update
+
+      - name: Xcode smoke build
+        run: |
+          set -euo pipefail
+          cd ios
+          xcodebuild \
+            -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination "generic/platform=iOS Simulator" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
