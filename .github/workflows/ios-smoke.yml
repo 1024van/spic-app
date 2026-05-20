@@ -42,6 +42,14 @@ jobs:
             echo "GPR_KEY is empty"
             exit 1
           fi
+          if [[ "$GPR_KEY" == *$'\n'* || "$GPR_KEY" == *$'\r'* ]]; then
+            echo "GPR_KEY must contain only the token, without notes or extra lines"
+            exit 1
+          fi
+          if [[ ! "$GPR_KEY" =~ ^(ghp_|gho_|ghu_|github_pat_)[A-Za-z0-9_]+$ ]]; then
+            echo "GPR_KEY does not look like a GitHub token"
+            exit 1
+          fi
 
       - name: Configure GitHub Packages auth
         shell: bash
