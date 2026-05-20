@@ -1,0 +1,3403 @@
+diff --git a/android/app/build.gradle b/android/app/build.gradle
+index b5b0052..fe27f5e 100644
+--- a/android/app/build.gradle
++++ b/android/app/build.gradle
+@@ -59,7 +59,7 @@ android {
+         // You can update the following values to match your application needs.
+         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+         minSdk = 26
+-        targetSdk = 35
++        targetSdk = 34
+         versionCode = flutterVersionCode.toInteger()
+         versionName = flutterVersionName
+     }
+diff --git a/lib/common/assets/asset_icons.dart b/lib/common/assets/asset_icons.dart
+index e8aa15f..4d49ea9 100644
+--- a/lib/common/assets/asset_icons.dart
++++ b/lib/common/assets/asset_icons.dart
+@@ -1,46 +1,51 @@
+ import 'package:flutter/material.dart';
+ 
+ abstract class AssetIcons {
+-  static const IconData add = IconData(0xe800, fontFamily: _kFontFam);
++  static const IconData add = IconData(
++    0xe800,
++    fontFamily: _kFontFam,
++    fontPackage: _kFontPkg,
++  );
+ 
+-  static const IconData anon = IconData(0xe801, fontFamily: _kFontFam);
+-  static const IconData arrowBack = IconData(0xe802, fontFamily: _kFontFam);
+-  static const IconData arrowDropDown = IconData(0xe803, fontFamily: _kFontFam);
+-  static const IconData arrowDropUp = IconData(0xe804, fontFamily: _kFontFam);
+-  static const IconData arrowForward = IconData(0xe805, fontFamily: _kFontFam);
+-  static const IconData arrowLeft = IconData(0xe806, fontFamily: _kFontFam);
+-  static const IconData arrowRight = IconData(0xe807, fontFamily: _kFontFam);
+-  static const IconData attach = IconData(0xe828, fontFamily: _kFontFam);
+-  static const IconData cancel = IconData(0xe808, fontFamily: _kFontFam);
+-  static const IconData checkBoxFilled = IconData(0xe809, fontFamily: _kFontFam);
+-  static const IconData checkBox = IconData(0xe80a, fontFamily: _kFontFam);
+-  static const IconData checkSmall = IconData(0xe80b, fontFamily: _kFontFam);
+-  static const IconData check = IconData(0xe80c, fontFamily: _kFontFam);
+-  static const IconData close = IconData(0xe80d, fontFamily: _kFontFam);
+-  static const IconData copy = IconData(0xe80e, fontFamily: _kFontFam);
+-  static const IconData delete = IconData(0xe80f, fontFamily: _kFontFam);
+-  static const IconData dns = IconData(0xe810, fontFamily: _kFontFam);
+-  static const IconData error = IconData(0xe811, fontFamily: _kFontFam);
+-  static const IconData fileDownload = IconData(0xe812, fontFamily: _kFontFam);
+-  static const IconData home = IconData(0xe813, fontFamily: _kFontFam);
+-  static const IconData locationOff = IconData(0xe814, fontFamily: _kFontFam);
+-  static const IconData locationOn = IconData(0xe815, fontFamily: _kFontFam);
+-  static const IconData menu = IconData(0xe816, fontFamily: _kFontFam);
+-  static const IconData modeEdit = IconData(0xe817, fontFamily: _kFontFam);
+-  static const IconData moreVert = IconData(0xe818, fontFamily: _kFontFam);
+-  static const IconData navigateBefore = IconData(0xe819, fontFamily: _kFontFam);
+-  static const IconData navigateNext = IconData(0xe81a, fontFamily: _kFontFam);
+-  static const IconData openInNew = IconData(0xe81b, fontFamily: _kFontFam);
+-  static const IconData powerSettingsNew = IconData(0xe81c, fontFamily: _kFontFam);
+-  static const IconData radioButtonChecked = IconData(0xe81d, fontFamily: _kFontFam);
+-  static const IconData radioButtonUnchecked = IconData(0xe81e, fontFamily: _kFontFam);
+-  static const IconData route = IconData(0xe81f, fontFamily: _kFontFam);
+-  static const IconData settingsFilled = IconData(0xe820, fontFamily: _kFontFam);
+-  static const IconData settings = IconData(0xe821, fontFamily: _kFontFam);
+-  static const IconData share = IconData(0xe822, fontFamily: _kFontFam);
+-  static const IconData sort = IconData(0xe823, fontFamily: _kFontFam);
+-  static const IconData unlink = IconData(0xe824, fontFamily: _kFontFam);
+-  static const IconData up = IconData(0xe825, fontFamily: _kFontFam);
+-  static const IconData update = IconData(0xe826, fontFamily: _kFontFam);
++  static const IconData anon = IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData arrowBack = IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData arrowDropDown = IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData arrowDropUp = IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData arrowForward = IconData(0xe805, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData arrowLeft = IconData(0xe806, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData arrowRight = IconData(0xe807, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData attach = IconData(0xe828, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData cancel = IconData(0xe808, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData checkBoxFilled = IconData(0xe809, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData checkBox = IconData(0xe80a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData checkSmall = IconData(0xe80b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData check = IconData(0xe80c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData close = IconData(0xe80d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData copy = IconData(0xe80e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData delete = IconData(0xe80f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData dns = IconData(0xe810, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData error = IconData(0xe811, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData fileDownload = IconData(0xe812, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData home = IconData(0xe813, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData locationOff = IconData(0xe814, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData locationOn = IconData(0xe815, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData menu = IconData(0xe816, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData modeEdit = IconData(0xe817, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData moreVert = IconData(0xe818, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData navigateBefore = IconData(0xe819, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData navigateNext = IconData(0xe81a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData openInNew = IconData(0xe81b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData powerSettingsNew = IconData(0xe81c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData radioButtonChecked = IconData(0xe81d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData radioButtonUnchecked = IconData(0xe81e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData route = IconData(0xe81f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData settingsFilled = IconData(0xe820, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData settings = IconData(0xe821, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData share = IconData(0xe822, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData sort = IconData(0xe823, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData unlink = IconData(0xe824, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData up = IconData(0xe825, fontFamily: _kFontFam, fontPackage: _kFontPkg);
++  static const IconData update = IconData(0xe826, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+   static const _kFontFam = 'IconFont';
++  static const _kFontPkg = 'trusttunnel';
+ }
+diff --git a/lib/data/database/app_database.dart b/lib/data/database/app_database.dart
+index c66591f..80d3df8 100644
+--- a/lib/data/database/app_database.dart
++++ b/lib/data/database/app_database.dart
+@@ -19,6 +19,7 @@ class AppDatabase extends _$AppDatabase {
+     '192.168.0.0/16',
+     '255.255.255.255/32',
+   ];
++
+   AppDatabase() : super(impl.connect());
+   AppDatabase.inMemory(super.e);
+ 
+@@ -124,6 +125,13 @@ class AppDatabase extends _$AppDatabase {
+       if (from < 3) {
+         await const MigrationsV3().migrate(this, m);
+       }
++      await _ensureBypassedAppPackagesTable();
+     },
+   );
++
++  Future<void> _ensureBypassedAppPackagesTable() => customStatement('''
++      CREATE TABLE IF NOT EXISTS bypassed_app_packages (
++        value TEXT NOT NULL PRIMARY KEY
++      )
++    ''');
+ }
+diff --git a/lib/data/database/tables/bypassed_app_packages_table.drift b/lib/data/database/tables/bypassed_app_packages_table.drift
+new file mode 100644
+index 0000000..70ccd58
+--- /dev/null
++++ b/lib/data/database/tables/bypassed_app_packages_table.drift
+@@ -0,0 +1,3 @@
++CREATE TABLE bypassed_app_packages (
++    value TEXT NOT NULL PRIMARY KEY
++);
+diff --git a/lib/data/database/tables/index.drift b/lib/data/database/tables/index.drift
+index e86093d..90a1779 100644
+--- a/lib/data/database/tables/index.drift
++++ b/lib/data/database/tables/index.drift
+@@ -3,7 +3,8 @@ import 'routing_modes_table.drift';
+ import 'vpn_request_table.drift';
+ import 'routing_profiles_table.drift';
+ import 'excluded_routes_table.drift';
++import 'bypassed_app_packages_table.drift';
+ import 'servers_table.drift';
+ import 'dns_servers_table.drift';
+ import 'profile_rules_table.drift';
+-import 'certificate_table.drift';
+\ No newline at end of file
++import 'certificate_table.drift';
+diff --git a/lib/data/datasources/in_memory_routing_datasource.dart b/lib/data/datasources/in_memory_routing_datasource.dart
+new file mode 100644
+index 0000000..477ad27
+--- /dev/null
++++ b/lib/data/datasources/in_memory_routing_datasource.dart
+@@ -0,0 +1,109 @@
++import 'package:trusttunnel/data/datasources/routing_datasource.dart';
++import 'package:trusttunnel/data/model/routing_mode.dart';
++import 'package:trusttunnel/data/model/routing_profile.dart';
++import 'package:trusttunnel/data/model/routing_profile_data.dart';
++import 'package:trusttunnel/shared_constants.dart';
++
++class InMemoryRoutingDataSource implements RoutingDataSource {
++  final List<RoutingProfile> _profiles = [
++    RoutingProfile(
++      id: kDefaultRoutingProfileId,
++      data: const RoutingProfileData(
++        name: 'Default',
++        defaultMode: RoutingMode.vpn,
++        bypassRules: [],
++        vpnRules: [],
++      ),
++    ),
++  ];
++
++  @override
++  Future<RoutingProfile> addNewProfile(RoutingProfileData request) async {
++    final profile = RoutingProfile(
++      id: _nextProfileId(),
++      data: request,
++    );
++
++    _profiles.add(profile);
++    return profile;
++  }
++
++  @override
++  Future<RoutingProfile> getProfileById({required String id}) async =>
++      _profiles.firstWhere((profile) => profile.id == id);
++
++  @override
++  Future<List<RoutingProfile>> getAllProfiles() async => List.unmodifiable(_profiles);
++
++  @override
++  Future<void> setDefaultRoutingMode({
++    required String id,
++    required RoutingMode mode,
++  }) async {
++    final index = _profiles.indexWhere((profile) => profile.id == id);
++    if (index == -1) return;
++
++    final old = _profiles[index];
++    _profiles[index] = old.copyWith(
++      data: old.data.copyWith(defaultMode: mode),
++    );
++  }
++
++  @override
++  Future<void> setProfileName({
++    required String id,
++    required String name,
++  }) async {
++    final index = _profiles.indexWhere((profile) => profile.id == id);
++    if (index == -1) return;
++
++    final old = _profiles[index];
++    _profiles[index] = old.copyWith(
++      data: old.data.copyWith(name: name),
++    );
++  }
++
++  @override
++  Future<void> setRules({
++    required String id,
++    required RoutingMode mode,
++    required List<String> rules,
++  }) async {
++    final index = _profiles.indexWhere((profile) => profile.id == id);
++    if (index == -1) return;
++
++    final old = _profiles[index];
++    _profiles[index] = old.copyWith(
++      data: switch (mode) {
++        RoutingMode.bypass => old.data.copyWith(bypassRules: rules),
++        RoutingMode.vpn => old.data.copyWith(vpnRules: rules),
++      },
++    );
++  }
++
++  @override
++  Future<void> removeAllRules({required String id}) async {
++    final index = _profiles.indexWhere((profile) => profile.id == id);
++    if (index == -1) return;
++
++    final old = _profiles[index];
++    _profiles[index] = old.copyWith(
++      data: old.data.copyWith(
++        bypassRules: const [],
++        vpnRules: const [],
++      ),
++    );
++  }
++
++  @override
++  Future<void> deleteProfile({required String id}) async {
++    _profiles.removeWhere((profile) => profile.id == id);
++  }
++
++  String _nextProfileId() {
++    final maxId = _profiles
++        .map((profile) => int.tryParse(profile.id) ?? 0)
++        .fold<int>(0, (previous, current) => current > previous ? current : previous);
++    return '${maxId + 1}';
++  }
++}
+diff --git a/lib/data/datasources/in_memory_server_datasource_fin.dart b/lib/data/datasources/in_memory_server_datasource_fin.dart
+new file mode 100644
+index 0000000..a0cca23
+--- /dev/null
++++ b/lib/data/datasources/in_memory_server_datasource_fin.dart
+@@ -0,0 +1,316 @@
++import 'dart:convert';
++import 'dart:io';
++
++import 'package:trusttunnel/data/datasources/server_datasource.dart';
++import 'package:trusttunnel/data/model/server.dart';
++import 'package:trusttunnel/data/model/server_data.dart';
++import 'package:trusttunnel/data/model/vpn_protocol.dart';
++import 'package:trusttunnel/shared_constants.dart';
++import 'package:vpn_plugin/deep_link_manager.dart';
++import 'package:vpn_plugin/models/upstream_protocol.dart';
++
++class InMemoryServerDataSource implements ServerDataSource {
++  final List<Server> _servers = [];
++  final DeepLinkManager _deepLinkManager = DeepLinkManagerImpl();
++
++  @override
++  Future<List<Server>> getAllServers() async => List.unmodifiable(_servers);
++
++  Future<Server?> getSelectedServer() async {
++    final servers = await getAllServers();
++
++    for (final server in servers) {
++      if (server.selected) {
++        return server;
++      }
++    }
++
++    return null;
++  }
++
++  @override
++  Future<void> setSelectedServerId({required String? id}) async {
++    for (var i = 0; i < _servers.length; i++) {
++      final server = _servers[i];
++      _servers[i] = server.copyWith(selected: server.id == id);
++    }
++  }
++
++  @override
++  Future<Server> addNewServer({required ServerData request}) async {
++    final server = Server(
++      id: _nextServerId(),
++      serverData: request,
++    );
++
++    _servers.add(server);
++    return server;
++  }
++
++  @override
++  Future<void> removeServer({required String serverId}) async {
++    _servers.removeWhere((server) => server.id == serverId);
++  }
++
++  @override
++  Future<void> setNewServer({
++    required String id,
++    required ServerData request,
++  }) async {
++    final index = _servers.indexWhere((server) => server.id == id);
++    if (index == -1) return;
++
++    _servers[index] = Server(
++      id: id,
++      serverData: request,
++      routingProfile: _servers[index].routingProfile,
++    );
++  }
++
++  @override
++  Future<Server> getServerById({required String id}) async => _servers.firstWhere((server) => server.id == id);
++
++  @override
++  Future<ServerData> getServerByBase64({
++    required String base64,
++    required String routingProfileId,
++  }) async {
++    final configuration = await _deepLinkManager.getConfigurationByBase64(base64: base64);
++
++    return ServerData.empty(
++      name: configuration.endpoint.name,
++      ipAddress: configuration.endpoint.addresses.first,
++      domain: configuration.endpoint.hostName,
++      username: configuration.endpoint.username,
++      password: configuration.endpoint.password,
++      vpnProtocol: configuration.endpoint.upStreamProtocol == UpStreamProtocol.http2
++          ? VpnProtocol.http2
++          : VpnProtocol.quic,
++      dnsServers: configuration.endpoint.dnsUpStreams,
++      routingProfileId: routingProfileId,
++      ipv6: configuration.endpoint.hasIpv6,
++      tlsPrefix: configuration.endpoint.clientRandom,
++      customSni: configuration.endpoint.customSni,
++    );
++  }
++
++  @override
++  Future<List<Server>> syncServersFromApi({required String? selectedServerId}) async {
++    final selectedServer = selectedServerId == null ? null : await _tryGetServerById(selectedServerId);
++
++    final client = HttpClient();
++    try {
++      final request = await client.getUrl(
++        Uri.parse('https://stop2virus.xyz/api/servers.json'),
++      );
++      final response = await request.close();
++      if (response.statusCode != 200) {
++        throw HttpException('Server API error: ${response.statusCode}');
++      }
++
++      final body = await response.transform(utf8.decoder).join();
++      final decoded = jsonDecode(body) as Map<String, dynamic>;
++      final serversJson = (decoded['servers'] as List?) ?? const [];
++      if (serversJson.isEmpty) {
++        return List.unmodifiable(_servers);
++      }
++
++      final syncedServers = <Server>[];
++      var nextId = int.parse(_nextServerId());
++      var selectedPreserved = false;
++
++      for (var index = 0; index < serversJson.length; index++) {
++        final serverJson = serversJson[index] as Map<String, dynamic>;
++        final host = '${serverJson['host'] ?? ''}'.trim();
++        final address = '${serverJson['address'] ?? ''}'.trim();
++        final username = '${serverJson['username'] ?? ''}'.trim();
++        final password = '${serverJson['password'] ?? ''}'.trim();
++        final name = '${serverJson['name'] ?? 'Server ${index + 1}'}'.trim();
++        final ipAddress = _extractIpAddress(host: host, address: address);
++        final countryCode = _countryCodeFromServerJson(
++          serverJson: serverJson,
++          name: name,
++          host: host,
++          ipAddress: ipAddress,
++        );
++        final matched = _findMatchingServer(
++          host: host,
++          address: address,
++        );
++        final id = matched?.id ?? '${nextId++}';
++        final effectiveUsername = username.isNotEmpty ? username : (matched?.username ?? '');
++        final effectivePassword = password.isNotEmpty ? password : (matched?.password ?? '');
++        final effectiveProtocol = _vpnProtocolFromServerJson(
++          serverJson,
++          fallback: matched?.vpnProtocol ?? VpnProtocol.http2,
++        );
++        final isSelected = selectedServerId == null ? index == 0 : id == selectedServerId;
++        if (isSelected) {
++          selectedPreserved = true;
++        }
++
++        syncedServers.add(
++          Server(
++            id: id,
++            serverData: ServerData.empty(
++              name: name.isEmpty ? 'Server ${index + 1}' : name,
++              ipAddress: ipAddress,
++              domain: host,
++              countryCode: countryCode,
++              username: effectiveUsername,
++              password: effectivePassword,
++              vpnProtocol: effectiveProtocol,
++              dnsServers: const ['1.1.1.1'],
++              routingProfileId: kDefaultRoutingProfileId,
++              selected: isSelected,
++            ),
++          ),
++        );
++      }
++
++      if (!selectedPreserved && selectedServer != null) {
++        syncedServers.insert(
++          0,
++          selectedServer.copyWith(selected: true),
++        );
++      }
++
++      _servers
++        ..clear()
++        ..addAll(syncedServers);
++
++      return List.unmodifiable(_servers);
++    } finally {
++      client.close(force: true);
++    }
++  }
++
++  String _nextServerId() {
++    final maxId = _servers
++        .map((server) => int.tryParse(server.id) ?? 0)
++        .fold<int>(0, (previous, value) => value > previous ? value : previous);
++    return '${maxId + 1}';
++  }
++
++  Server? _findMatchingServer({
++    required String host,
++    required String address,
++  }) {
++    final normalizedHost = host.trim().toLowerCase();
++    final normalizedAddress = address.trim().toLowerCase();
++    final normalizedAddressHost = normalizedAddress.split(':').first;
++
++    for (final server in _servers) {
++      final rawServerAddress = server.ipAddress.trim().toLowerCase();
++      final serverAddress = rawServerAddress.contains(':') ? rawServerAddress : '$rawServerAddress:443';
++      final rawServerHost = rawServerAddress.split(':').first;
++      final matchesHost = normalizedHost.isNotEmpty && server.domain.trim().toLowerCase() == normalizedHost;
++      final matchesAddress =
++          normalizedAddress.isNotEmpty &&
++          (serverAddress == normalizedAddress ||
++              rawServerAddress == normalizedAddress ||
++              rawServerHost == normalizedAddressHost);
++      if (matchesHost || matchesAddress) {
++        return server;
++      }
++    }
++
++    return null;
++  }
++
++  VpnProtocol _vpnProtocolFromServerJson(
++    Map<String, dynamic> serverJson, {
++    required VpnProtocol fallback,
++  }) {
++    final rawProtocol = '${serverJson['protocol'] ?? serverJson['vpnProtocol'] ?? ''}'.trim().toLowerCase();
++    return switch (rawProtocol) {
++      'http2' || 'http/2' || 'h2' => VpnProtocol.http2,
++      'quic' || 'http3' || 'http/3' || 'h3' => VpnProtocol.quic,
++      _ => fallback,
++    };
++  }
++
++  Future<Server?> _tryGetServerById(String id) async {
++    for (final server in _servers) {
++      if (server.id == id) {
++        return server;
++      }
++    }
++
++    return null;
++  }
++
++  String _extractIpAddress({
++    required String host,
++    required String address,
++  }) {
++    if (address.isNotEmpty) {
++      return address;
++    }
++
++    return host;
++  }
++
++  String? _countryCodeFromServerJson({
++    required Map<String, dynamic> serverJson,
++    required String name,
++    required String host,
++    required String ipAddress,
++  }) {
++    final directCode = _normalizeCountryCode(
++      serverJson['countryCode'] ??
++          serverJson['country_code'] ??
++          serverJson['country_iso'] ??
++          serverJson['isoCode'] ??
++          serverJson['country'] ??
++          serverJson['location'],
++    );
++    if (directCode != null) return directCode;
++
++    final countryText = [
++      serverJson['country'],
++      serverJson['location'],
++      serverJson['city'],
++      name,
++    ].whereType<Object>().join(' ').toLowerCase();
++
++    for (final entry in _countryNameCodes.entries) {
++      if (countryText.contains(entry.key)) return entry.value;
++    }
++
++    final hostKey = host.toLowerCase();
++    final ipKey = ipAddress.split(':').first.toLowerCase();
++    return _serverLocationCodes[hostKey] ?? _serverLocationCodes[ipKey];
++  }
++
++  String? _normalizeCountryCode(Object? value) {
++    final code = '$value'.trim().toUpperCase();
++    if (RegExp(r'^[A-Z]{2}$').hasMatch(code)) {
++      return code;
++    }
++
++    return null;
++  }
++}
++
++const Map<String, String> _serverLocationCodes = {
++  'stop2virus.xyz': 'FI',
++  '185.236.24.249': 'FI',
++  'nl1.trutun.online': 'NL',
++  '212.87.223.183': 'NL',
++  'nl3.trutun.online': 'NL',
++  '146.103.124.6': 'NL',
++};
++
++const Map<String, String> _countryNameCodes = {
++  'finland': 'FI',
++  'suomi': 'FI',
++  'netherlands': 'NL',
++  'nederland': 'NL',
++  'holland': 'NL',
++  'nl3': 'NL',
++  'germany': 'DE',
++  'deutschland': 'DE',
++  'united states': 'US',
++  'usa': 'US',
++};
+diff --git a/lib/data/datasources/local_sources/server_datasource_impl.dart b/lib/data/datasources/local_sources/server_datasource_impl.dart
+index 6eeaac7..d740f2f 100644
+--- a/lib/data/datasources/local_sources/server_datasource_impl.dart
++++ b/lib/data/datasources/local_sources/server_datasource_impl.dart
+@@ -69,27 +69,14 @@ class ServerDataSourceImpl implements ServerDataSource {
+ 
+     return Server(
+       id: id.toString(),
+-      serverData: ServerData(
+-        name: request.name,
+-        ipAddress: request.ipAddress,
+-        domain: request.domain,
+-        username: request.username,
+-        password: request.password,
+-        vpnProtocol: request.vpnProtocol,
+-        routingProfileId: request.routingProfileId,
+-        dnsServers: request.dnsServers,
+-        ipv6: request.ipv6,
+-        certificate: request.certificate,
+-        tlsPrefix: request.tlsPrefix,
+-        customSni: request.customSni,
+-      ),
++      serverData: request,
+     );
+   }
+ 
+   /// {@macro server_data_source_get_all_servers}
+   ///
+   /// This method loads server rows first, then loads DNS rows for all servers,
+-  /// and finally assembles [RawServer] instances.
++  /// and finally assembles [Server] instances.
+   @override
+   Future<List<Server>> getAllServers() async {
+     final serversRows = await database.select(database.servers).get();
+@@ -281,6 +268,9 @@ class ServerDataSourceImpl implements ServerDataSource {
+     );
+   }
+ 
++  @override
++  Future<List<Server>> syncServersFromApi({required String? selectedServerId}) => getAllServers();
++
+   /// Loads DNS server rows for the given server ids.
+   ///
+   /// Rows are returned in insertion order (ascending by row id).
+diff --git a/lib/data/datasources/local_sources/settings_datasource_impl.dart b/lib/data/datasources/local_sources/settings_datasource_impl.dart
+index 9673cd9..11d18c5 100644
+--- a/lib/data/datasources/local_sources/settings_datasource_impl.dart
++++ b/lib/data/datasources/local_sources/settings_datasource_impl.dart
+@@ -23,6 +23,14 @@ class SettingsDataSourceImpl implements SettingsDataSource {
+     return unparsedResult.map((e) => e.value).toList();
+   }
+ 
++  @override
++  Future<List<String>> getBypassedAppPackages() async {
++    await _ensureBypassedAppPackagesTable();
++    final unparsedResult = await database.bypassedAppPackages.select().get();
++
++    return unparsedResult.map((e) => e.value).toList();
++  }
++
+   /// {@macro settings_data_source_set_excluded_routes}
+   ///
+   /// The stored list is replaced atomically from the perspective of this method:
+@@ -38,4 +46,23 @@ class SettingsDataSourceImpl implements SettingsDataSource {
+       ),
+     );
+   }
++
++  @override
++  Future<void> setBypassedAppPackages(List<String> packageNames) async {
++    await _ensureBypassedAppPackagesTable();
++    await database.bypassedAppPackages.deleteAll();
++    await database.bypassedAppPackages.insertAll(
++      packageNames.map(
++        (e) => db.BypassedAppPackagesCompanion.insert(
++          value: e,
++        ),
++      ),
++    );
++  }
++
++  Future<void> _ensureBypassedAppPackagesTable() => database.customStatement('''
++      CREATE TABLE IF NOT EXISTS bypassed_app_packages (
++        value TEXT NOT NULL PRIMARY KEY
++      )
++    ''');
+ }
+diff --git a/lib/data/datasources/native_sources/vpn_datasource_impl.dart b/lib/data/datasources/native_sources/vpn_datasource_impl.dart
+index c6a2553..70e931c 100644
+--- a/lib/data/datasources/native_sources/vpn_datasource_impl.dart
++++ b/lib/data/datasources/native_sources/vpn_datasource_impl.dart
+@@ -86,6 +86,7 @@ class VpnDataSourceImpl implements VpnDataSource {
+     required List<String> excludedRoutes,
+   }) {
+     final exclusions = _getExclusionsByMode(routingProfile);
++    final protocolEncoder = UpStreamProtocolEncoder();
+ 
+     final endPoint = Endpoint(
+       name: server.name,
+@@ -101,14 +102,18 @@ class VpnDataSourceImpl implements VpnDataSource {
+       ],
+       exclusions: exclusions,
+       dnsUpStreams: server.dnsServers,
+-      upStreamProtocol: UpStreamProtocolEncoder().convert(
+-        server.vpnProtocol,
+-      ),
++      upStreamProtocol: protocolEncoder.convert(server.vpnProtocol),
++      upStreamFallbackProtocol: server.upstreamFallbackProtocol == null
++          ? null
++          : protocolEncoder.convert(server.upstreamFallbackProtocol!),
++      antiDpi: server.antiDpi,
+     );
+ 
+     return _platformApi.start(
+       serverName: server.name,
+       configuration: Configuration(
++        killSwitchEnabled: server.killSwitchEnabled,
++        postQuantumGroupEnabled: server.postQuantumGroupEnabled,
+         vpnMode: VpnModeEncoder().convert(
+           routingProfile.defaultMode,
+         ),
+@@ -142,11 +147,15 @@ class VpnDataSourceImpl implements VpnDataSource {
+     required List<String> excludedRoutes,
+   }) {
+     final exclusions = _getExclusionsByMode(routingProfile);
++    final protocolEncoder = UpStreamProtocolEncoder();
+ 
+     final endPoint = Endpoint(
+       name: server.name,
+       hostName: server.domain,
+       hasIpv6: server.ipv6,
++      certificate: server.certificate?.data ?? '',
++      clientRandom: server.tlsPrefix ?? '',
++      customSni: server.customSni ?? '',
+       username: server.username,
+       password: server.password,
+       addresses: [
+@@ -154,17 +163,18 @@ class VpnDataSourceImpl implements VpnDataSource {
+       ],
+       exclusions: exclusions,
+       dnsUpStreams: server.dnsServers,
+-      upStreamProtocol: UpStreamProtocolEncoder().convert(
+-        server.vpnProtocol,
+-      ),
+-      customSni: server.customSni ?? '',
+-      certificate: server.certificate?.data ?? '',
+-      clientRandom: server.tlsPrefix ?? '',
++      upStreamProtocol: protocolEncoder.convert(server.vpnProtocol),
++      upStreamFallbackProtocol: server.upstreamFallbackProtocol == null
++          ? null
++          : protocolEncoder.convert(server.upstreamFallbackProtocol!),
++      antiDpi: server.antiDpi,
+     );
+ 
+     return _platformApi.updateConfiguration(
+       serverName: server.name,
+       configuration: Configuration(
++        killSwitchEnabled: server.killSwitchEnabled,
++        postQuantumGroupEnabled: server.postQuantumGroupEnabled,
+         vpnMode: VpnModeEncoder().convert(
+           routingProfile.defaultMode,
+         ),
+diff --git a/lib/data/datasources/server_datasource.dart b/lib/data/datasources/server_datasource.dart
+index 0785fc5..7f3ca05 100644
+--- a/lib/data/datasources/server_datasource.dart
++++ b/lib/data/datasources/server_datasource.dart
+@@ -3,25 +3,12 @@ import 'package:trusttunnel/data/model/server_data.dart';
+ 
+ /// {@template server_data_source}
+ /// Persistence interface for VPN servers and their related settings.
+-///
+-/// A server record typically includes:
+-/// - connection endpoint data (IP, domain),
+-/// - credentials,
+-/// - a selected VPN protocol,
+-/// - DNS resolver list,
+-/// - and a reference to a routing profile.
+ /// {@endtemplate}
+ abstract class ServerDataSource {
+-  /// {@template server_data_source_add_new_server}
+   /// Creates a server record and persists its DNS server list.
+-  /// {@endtemplate}
+   Future<Server> addNewServer({required ServerData request});
+ 
+-  /// {@template server_data_source_get_server_by_id}
+   /// Loads a server by id.
+-  ///
+-  /// Implementations may throw if the server does not exist.
+-  /// {@endtemplate}
+   Future<Server> getServerById({required String id});
+ 
+   Future<ServerData> getServerByBase64({
+@@ -29,30 +16,18 @@ abstract class ServerDataSource {
+     required String routingProfileId,
+   });
+ 
+-  /// {@template server_data_source_get_all_servers}
+   /// Loads all servers stored in persistence.
+-  ///
+-  /// Returns an empty list if no servers exist.
+-  /// {@endtemplate}
+   Future<List<Server>> getAllServers();
+ 
+-  /// {@template server_data_source_set_selected_server_id}
+   /// Marks the server with [id] as selected and unselects any previously selected one.
+-  ///
+-  /// Implementations should ensure that at most one server is selected at a time.
+-  /// {@endtemplate}
+   Future<void> setSelectedServerId({required String? id});
+ 
+-  /// {@template server_data_source_remove_server}
+   /// Removes a server record by its identifier.
+-  /// {@endtemplate}
+   Future<void> removeServer({required String serverId});
+ 
+-  /// {@template server_data_source_set_new_server}
+   /// Replaces the stored values of an existing server with the provided request.
+-  ///
+-  /// Implementations are expected to update both the main server record and its
+-  /// DNS server list.
+-  /// {@endtemplate}
+   Future<void> setNewServer({required String id, required ServerData request});
++
++  /// Synchronizes the server list from a remote source, if the implementation has one.
++  Future<List<Server>> syncServersFromApi({required String? selectedServerId});
+ }
+diff --git a/lib/data/datasources/settings_datasource.dart b/lib/data/datasources/settings_datasource.dart
+index dfa2307..3e777a5 100644
+--- a/lib/data/datasources/settings_datasource.dart
++++ b/lib/data/datasources/settings_datasource.dart
+@@ -17,4 +17,10 @@ abstract class SettingsDataSource {
+   /// Loads the currently stored excluded routes list.
+   /// {@endtemplate}
+   Future<List<String>> getExcludedRoutes();
+-}
+\ No newline at end of file
++
++  /// Persists the list of Android package names that should bypass the VPN.
++  Future<void> setBypassedAppPackages(List<String> packageNames);
++
++  /// Loads the stored list of Android package names that should bypass the VPN.
++  Future<List<String>> getBypassedAppPackages();
++}
+diff --git a/lib/data/model/raw/add_server_request.dart b/lib/data/model/raw/add_server_request.dart
+new file mode 100644
+index 0000000..279d6a3
+--- /dev/null
++++ b/lib/data/model/raw/add_server_request.dart
+@@ -0,0 +1,6 @@
++import 'package:trusttunnel/data/model/server_data.dart';
++
++/// Backward-compatible alias kept for SPIC and older TrustTunnel callers.
++///
++/// Upstream now uses [ServerData] directly for create/update operations.
++typedef AddServerRequest = ServerData;
+diff --git a/lib/data/model/server.dart b/lib/data/model/server.dart
+index d29e830..2070b95 100644
+--- a/lib/data/model/server.dart
++++ b/lib/data/model/server.dart
+@@ -1,36 +1,120 @@
+ // ignore_for_file: public_member_api_docs, sort_constructors_first
++import 'package:flutter/foundation.dart';
++import 'package:trusttunnel/data/model/routing_mode.dart';
++import 'package:trusttunnel/data/model/routing_profile.dart';
++import 'package:trusttunnel/data/model/routing_profile_data.dart';
+ import 'package:trusttunnel/data/model/server_data.dart';
++import 'package:trusttunnel/data/model/vpn_protocol.dart';
+ 
+ class Server {
+   final String id;
+   final ServerData serverData;
++  final RoutingProfile? _routingProfile;
+ 
+   Server({
+     required this.id,
+     required this.serverData,
+-  });
++    RoutingProfile? routingProfile,
++  }) : _routingProfile = routingProfile;
++
++  String get name => serverData.name;
++
++  String get ipAddress => serverData.ipAddress;
++
++  String get domain => serverData.domain;
++
++  String? get countryCode => serverData.countryCode;
++
++  String get username => serverData.username;
++
++  String get password => serverData.password;
++
++  VpnProtocol get vpnProtocol => serverData.vpnProtocol;
++
++  VpnProtocol? get upstreamFallbackProtocol => serverData.upstreamFallbackProtocol;
++
++  List<String> get dnsServers => serverData.dnsServers;
++
++  bool get killSwitchEnabled => serverData.killSwitchEnabled;
++
++  bool get antiDpi => serverData.antiDpi;
++
++  bool get postQuantumGroupEnabled => serverData.postQuantumGroupEnabled;
++
++  bool get selected => serverData.selected;
++
++  RoutingProfile get routingProfile =>
++      _routingProfile ??
++      RoutingProfile(
++        id: serverData.routingProfileId,
++        data: const RoutingProfileData(
++          name: 'Default profile',
++          defaultMode: RoutingMode.vpn,
++          bypassRules: [],
++          vpnRules: [],
++        ),
++      );
+ 
+   @override
+   int get hashCode => Object.hashAll([
+     id.hashCode,
+     serverData.hashCode,
++    routingProfile.hashCode,
+   ]);
+ 
+   @override
+-  String toString() => 'Server(id: $id, serverData: $serverData)';
++  String toString() => 'Server(id: $id, serverData: $serverData, routingProfile: $routingProfile)';
+ 
+   @override
+   bool operator ==(covariant Server other) {
+     if (identical(this, other)) return true;
+ 
+-    return other.id == id && other.serverData == serverData;
++    return other.id == id &&
++        other.serverData == serverData &&
++        other.routingProfile == routingProfile &&
++        listEquals(other.dnsServers, dnsServers);
+   }
+ 
+   Server copyWith({
+     String? id,
+     ServerData? serverData,
+-  }) => Server(
+-    id: id ?? this.id,
+-    serverData: serverData ?? this.serverData,
+-  );
++    RoutingProfile? routingProfile,
++    String? name,
++    String? ipAddress,
++    String? domain,
++    String? countryCode,
++    String? username,
++    String? password,
++    VpnProtocol? vpnProtocol,
++    VpnProtocol? upstreamFallbackProtocol,
++    bool clearUpstreamFallbackProtocol = false,
++    List<String>? dnsServers,
++    bool? killSwitchEnabled,
++    bool? antiDpi,
++    bool? postQuantumGroupEnabled,
++    bool? selected,
++  }) {
++    final baseData = serverData ?? this.serverData;
++
++    return Server(
++      id: id ?? this.id,
++      serverData: baseData.copyWith(
++        name: name,
++        ipAddress: ipAddress,
++        domain: domain,
++        countryCode: countryCode,
++        username: username,
++        password: password,
++        vpnProtocol: vpnProtocol,
++        upstreamFallbackProtocol: upstreamFallbackProtocol,
++        clearUpstreamFallbackProtocol: clearUpstreamFallbackProtocol,
++        dnsServers: dnsServers,
++        killSwitchEnabled: killSwitchEnabled,
++        antiDpi: antiDpi,
++        postQuantumGroupEnabled: postQuantumGroupEnabled,
++        selected: selected,
++      ),
++      routingProfile: routingProfile ?? _routingProfile,
++    );
++  }
+ }
+diff --git a/lib/data/model/server_data.dart b/lib/data/model/server_data.dart
+index 373dcb6..3cb5dd0 100644
+--- a/lib/data/model/server_data.dart
++++ b/lib/data/model/server_data.dart
+@@ -3,15 +3,13 @@ import 'package:trusttunnel/common/models/value_data.dart';
+ import 'package:trusttunnel/data/model/certificate.dart';
+ import 'package:trusttunnel/data/model/vpn_protocol.dart';
+ 
+-/// {@template server}
++/// {@template server_data}
+ /// A fully resolved VPN server configuration used by the app.
+ ///
+-/// `Server` combines server connection credentials and transport parameters
+-/// with the associated []. This is a convenient domain model for
+-/// UI and business logic where you need both server details and routing rules
+-/// in one place.
+-///
+-/// Instances are immutable and use value-based equality.
++/// `ServerData` stores endpoint credentials, transport parameters, DNS
++/// settings and the routing profile reference. SPIC keeps a few policy fields
++/// here too so the app can adjust kill switch, fallback protocol and DNS
++/// security before handing the configuration to the native VPN layer.
+ /// {@endtemplate}
+ @immutable
+ class ServerData {
+@@ -24,6 +22,9 @@ class ServerData {
+   /// Server host name used for TLS (SNI / certificate verification).
+   final String domain;
+ 
++  /// ISO 3166-1 alpha-2 country code for the physical server location.
++  final String? countryCode;
++
+   /// Username used for authentication.
+   final String username;
+ 
+@@ -33,9 +34,10 @@ class ServerData {
+   /// Transport protocol used to communicate with the server.
+   final VpnProtocol vpnProtocol;
+ 
++  /// Optional fallback transport protocol used when the primary upstream fails.
++  final VpnProtocol? upstreamFallbackProtocol;
++
+   /// DNS upstream addresses associated with this server.
+-  ///
+-  /// The list is expected to be treated as immutable by callers.
+   final List<String> dnsServers;
+ 
+   /// Routing profile applied when connecting to this server.
+@@ -52,20 +54,34 @@ class ServerData {
+ 
+   final String? customSni;
+ 
+-  /// {@macro server}
++  /// Whether traffic should be blocked instead of falling back outside VPN.
++  final bool killSwitchEnabled;
++
++  /// Whether anti-DPI measures should be enabled for this endpoint.
++  final bool antiDpi;
++
++  /// Whether post-quantum key exchange should be enabled when supported.
++  final bool postQuantumGroupEnabled;
++
++  /// {@macro server_data}
+   const ServerData({
+     required this.name,
+     required this.ipAddress,
+     required this.domain,
++    this.countryCode,
+     required this.username,
+     required this.password,
+     required this.vpnProtocol,
++    this.upstreamFallbackProtocol,
+     required this.dnsServers,
+     required this.routingProfileId,
+     required this.ipv6,
+     this.certificate,
+     this.tlsPrefix,
+     this.customSni,
++    this.killSwitchEnabled = true,
++    this.antiDpi = false,
++    this.postQuantumGroupEnabled = true,
+     this.selected = false,
+   });
+ 
+@@ -73,15 +89,20 @@ class ServerData {
+     this.name = '',
+     this.ipAddress = '',
+     this.domain = '',
++    this.countryCode,
+     this.username = '',
+     this.password = '',
+     this.vpnProtocol = VpnProtocol.http2,
++    this.upstreamFallbackProtocol,
+     this.dnsServers = const [],
+     this.routingProfileId = '',
+     this.ipv6 = true,
+     this.certificate,
+     this.tlsPrefix,
+     this.customSni,
++    this.killSwitchEnabled = true,
++    this.antiDpi = false,
++    this.postQuantumGroupEnabled = true,
+     this.selected = false,
+   });
+ 
+@@ -90,9 +111,11 @@ class ServerData {
+     name,
+     ipAddress,
+     domain,
++    countryCode,
+     username,
+     password,
+     vpnProtocol,
++    upstreamFallbackProtocol,
+     Object.hashAll(dnsServers),
+     routingProfileId,
+     selected,
+@@ -100,6 +123,9 @@ class ServerData {
+     ipv6,
+     tlsPrefix,
+     customSni,
++    killSwitchEnabled,
++    antiDpi,
++    postQuantumGroupEnabled,
+   );
+ 
+   @override
+@@ -108,15 +134,20 @@ class ServerData {
+       'name: $name, '
+       'ipAddress: $ipAddress, '
+       'domain: $domain, '
+-      'customSni: $customSni, '
++      'countryCode: $countryCode, '
+       'username: $username, '
+       'vpnProtocol: $vpnProtocol, '
++      'upstreamFallbackProtocol: $upstreamFallbackProtocol, '
+       'dnsServers: $dnsServers, '
+       'routingProfile: $routingProfileId, '
+       'selected: $selected,'
+       'ipv6: $ipv6,'
+       'tlsPrefix: $tlsPrefix,'
++      'customSni: $customSni, '
+       'certificate: $certificate,'
++      'killSwitchEnabled: $killSwitchEnabled, '
++      'antiDpi: $antiDpi, '
++      'postQuantumGroupEnabled: $postQuantumGroupEnabled'
+       ')';
+ 
+   @override
+@@ -127,28 +158,34 @@ class ServerData {
+         other.name.trim() == name.trim() &&
+         other.ipAddress == ipAddress &&
+         other.domain == domain &&
++        other.countryCode == countryCode &&
+         other.username == username &&
+         other.password == password &&
+         other.vpnProtocol == vpnProtocol &&
++        other.upstreamFallbackProtocol == upstreamFallbackProtocol &&
+         listEquals(other.dnsServers, dnsServers) &&
+         other.routingProfileId == routingProfileId &&
+         other.selected == selected &&
+         other.ipv6 == ipv6 &&
+         other.tlsPrefix == tlsPrefix &&
+         other.certificate == certificate &&
+-        other.customSni == customSni;
++        other.customSni == customSni &&
++        other.killSwitchEnabled == killSwitchEnabled &&
++        other.antiDpi == antiDpi &&
++        other.postQuantumGroupEnabled == postQuantumGroupEnabled;
+   }
+ 
+-  /// Creates a copy of this server with the given fields replaced.
+-  ///
+-  /// Fields that are not provided retain their original values.
++  /// Creates a copy of this server data with the given fields replaced.
+   ServerData copyWith({
+     String? name,
+     String? ipAddress,
+     String? domain,
++    String? countryCode,
+     String? username,
+     String? password,
+     VpnProtocol? vpnProtocol,
++    VpnProtocol? upstreamFallbackProtocol,
++    bool clearUpstreamFallbackProtocol = false,
+     List<String>? dnsServers,
+     String? routingProfileId,
+     bool? selected,
+@@ -156,13 +193,20 @@ class ServerData {
+     ValueData<Certificate>? certificate,
+     ValueData<String>? tlsPrefix,
+     ValueData<String>? customSni,
++    bool? killSwitchEnabled,
++    bool? antiDpi,
++    bool? postQuantumGroupEnabled,
+   }) => ServerData(
+     name: name ?? this.name,
+     ipAddress: ipAddress ?? this.ipAddress,
+     domain: domain ?? this.domain,
++    countryCode: countryCode ?? this.countryCode,
+     username: username ?? this.username,
+     password: password ?? this.password,
+     vpnProtocol: vpnProtocol ?? this.vpnProtocol,
++    upstreamFallbackProtocol: clearUpstreamFallbackProtocol
++        ? null
++        : upstreamFallbackProtocol ?? this.upstreamFallbackProtocol,
+     dnsServers: dnsServers ?? this.dnsServers,
+     routingProfileId: routingProfileId ?? this.routingProfileId,
+     selected: selected ?? this.selected,
+@@ -170,5 +214,8 @@ class ServerData {
+     certificate: certificate != null ? certificate.value : this.certificate,
+     tlsPrefix: tlsPrefix != null ? tlsPrefix.value : this.tlsPrefix,
+     customSni: customSni != null ? customSni.value : this.customSni,
++    killSwitchEnabled: killSwitchEnabled ?? this.killSwitchEnabled,
++    antiDpi: antiDpi ?? this.antiDpi,
++    postQuantumGroupEnabled: postQuantumGroupEnabled ?? this.postQuantumGroupEnabled,
+   );
+ }
+diff --git a/lib/data/repository/server_repository.dart b/lib/data/repository/server_repository.dart
+index cb39642..cc262ac 100644
+--- a/lib/data/repository/server_repository.dart
++++ b/lib/data/repository/server_repository.dart
+@@ -1,7 +1,12 @@
+ import 'dart:async';
++
+ import 'package:trusttunnel/data/datasources/certificate_datasource.dart';
++import 'package:trusttunnel/data/datasources/routing_datasource.dart';
+ import 'package:trusttunnel/data/datasources/server_datasource.dart';
+ import 'package:trusttunnel/data/model/certificate.dart';
++import 'package:trusttunnel/data/model/routing_mode.dart';
++import 'package:trusttunnel/data/model/routing_profile.dart';
++import 'package:trusttunnel/data/model/routing_profile_data.dart';
+ import 'package:trusttunnel/data/model/server.dart';
+ import 'package:trusttunnel/data/model/server_data.dart';
+ 
+@@ -10,6 +15,8 @@ abstract class ServerRepository {
+ 
+   Future<List<Server>> getAllServers();
+ 
++  Future<List<Server>> syncServersFromApi({required String? selectedServerId});
++
+   Future<Server?> getServerById({required String id});
+ 
+   Future<void> setSelectedServerId({required String? id});
+@@ -24,12 +31,15 @@ abstract class ServerRepository {
+ class ServerRepositoryImpl implements ServerRepository {
+   final ServerDataSource _serverDataSource;
+   final CertificateDataSource _certificateDataSource;
++  final RoutingDataSource _routingDataSource;
+ 
+   ServerRepositoryImpl({
+     required ServerDataSource serverDataSource,
+     required CertificateDataSource certificateDataSource,
++    required RoutingDataSource routingDataSource,
+   }) : _serverDataSource = serverDataSource,
+-       _certificateDataSource = certificateDataSource;
++       _certificateDataSource = certificateDataSource,
++       _routingDataSource = routingDataSource;
+ 
+   @override
+   Future<Server> addNewServer({required ServerData request}) async {
+@@ -37,14 +47,23 @@ class ServerRepositoryImpl implements ServerRepository {
+       request: request,
+     );
+ 
+-    return server;
++    return _attachProfile(server);
+   }
+ 
+   @override
+   Future<List<Server>> getAllServers() async {
+     final servers = await _serverDataSource.getAllServers();
+ 
+-    return servers;
++    return _attachProfiles(servers);
++  }
++
++  @override
++  Future<List<Server>> syncServersFromApi({required String? selectedServerId}) async {
++    final servers = await _serverDataSource.syncServersFromApi(
++      selectedServerId: selectedServerId,
++    );
++
++    return _attachProfiles(servers);
+   }
+ 
+   @override
+@@ -58,8 +77,52 @@ class ServerRepositoryImpl implements ServerRepository {
+   Future<void> removeServer({required String serverId}) => _serverDataSource.removeServer(serverId: serverId);
+ 
+   @override
+-  Future<Server?> getServerById({required String id}) => _serverDataSource.getServerById(id: id);
++  Future<Server?> getServerById({required String id}) async {
++    final server = await _serverDataSource.getServerById(id: id);
++
++    return _attachProfile(server);
++  }
+ 
+   @override
+   Future<Certificate?> pickCertificate() => _certificateDataSource.pickCertificate();
++
++  Future<List<Server>> _attachProfiles(List<Server> servers) async {
++    if (servers.isEmpty) return servers;
++
++    final profiles = await _routingDataSource.getAllProfiles();
++    final profilesMap = Map.fromEntries(profiles.map((profile) => MapEntry(profile.id, profile)));
++
++    return servers
++        .map((server) {
++          final profile =
++              profilesMap[server.serverData.routingProfileId] ?? _fallbackProfile(server.serverData.routingProfileId);
++
++          return server.copyWith(routingProfile: profile);
++        })
++        .toList(growable: false);
++  }
++
++  Future<Server> _attachProfile(Server server) async {
++    try {
++      final profile = await _routingDataSource.getProfileById(
++        id: server.serverData.routingProfileId,
++      );
++
++      return server.copyWith(routingProfile: profile);
++    } catch (_) {
++      return server.copyWith(
++        routingProfile: _fallbackProfile(server.serverData.routingProfileId),
++      );
++    }
++  }
++
++  RoutingProfile _fallbackProfile(String id) => RoutingProfile(
++    id: id,
++    data: const RoutingProfileData(
++      name: 'Default profile',
++      defaultMode: RoutingMode.vpn,
++      bypassRules: [],
++      vpnRules: [],
++    ),
++  );
+ }
+diff --git a/lib/data/repository/settings_repository.dart b/lib/data/repository/settings_repository.dart
+index 7c95df9..e7ac594 100644
+--- a/lib/data/repository/settings_repository.dart
++++ b/lib/data/repository/settings_repository.dart
+@@ -6,6 +6,10 @@ abstract class SettingsRepository {
+   Future<void> setExcludedRoutes(List<String> routes);
+ 
+   Future<List<String>> getExcludedRoutes();
++
++  Future<void> setBypassedAppPackages(List<String> packageNames);
++
++  Future<List<String>> getBypassedAppPackages();
+ }
+ 
+ class SettingsRepositoryImpl implements SettingsRepository {
+@@ -20,4 +24,11 @@ class SettingsRepositoryImpl implements SettingsRepository {
+ 
+   @override
+   Future<void> setExcludedRoutes(List<String> routes) => _settingsDataSource.setExcludedRoutes(routes);
++
++  @override
++  Future<List<String>> getBypassedAppPackages() => _settingsDataSource.getBypassedAppPackages();
++
++  @override
++  Future<void> setBypassedAppPackages(List<String> packageNames) =>
++      _settingsDataSource.setBypassedAppPackages(packageNames);
+ }
+diff --git a/lib/di/model/repository_factory.dart b/lib/di/model/repository_factory.dart
+index 2350ba0..240dee3 100644
+--- a/lib/di/model/repository_factory.dart
++++ b/lib/di/model/repository_factory.dart
+@@ -38,6 +38,7 @@ class RepositoryFactoryImpl implements RepositoryFactory {
+   ServerRepository get serverRepository => _serverRepository ??= ServerRepositoryImpl(
+     serverDataSource: _dependencyFactory.serverDataSource,
+     certificateDataSource: _dependencyFactory.certificateDataSource,
++    routingDataSource: _dependencyFactory.routingDataSource,
+   );
+ 
+   @override
+diff --git a/lib/feature/server/servers/controller/servers_controller.dart b/lib/feature/server/servers/controller/servers_controller.dart
+index 1182049..0ead9fc 100644
+--- a/lib/feature/server/servers/controller/servers_controller.dart
++++ b/lib/feature/server/servers/controller/servers_controller.dart
+@@ -6,7 +6,7 @@ import 'package:trusttunnel/data/repository/server_repository.dart';
+ import 'package:trusttunnel/feature/server/servers/controller/servers_states.dart';
+ 
+ /// {@template products_controller}
+-/// Controller for managing products and purchase operations.
++/// Controller for managing server list and selection operations.
+ /// {@endtemplate}
+ final class ServersController extends BaseStateController<ServersState> with SequentialControllerHandler {
+   final ServerRepository _repository;
+@@ -17,7 +17,6 @@ final class ServersController extends BaseStateController<ServersState> with Seq
+     super.initialState = const ServersState.initial(),
+   }) : _repository = repository;
+ 
+-  /// Make a purchase for the given product ID
+   void fetchServers() {
+     handle(
+       () async {
+@@ -27,7 +26,9 @@ final class ServersController extends BaseStateController<ServersState> with Seq
+           ),
+         );
+ 
+-        final servers = await _repository.getAllServers();
++        final servers = await _repository.syncServersFromApi(
++          selectedServerId: state.selectedServer?.id,
++        );
+ 
+         setState(
+           ServersState.idle(
+@@ -40,7 +41,6 @@ final class ServersController extends BaseStateController<ServersState> with Seq
+     );
+   }
+ 
+-  /// Load available products
+   void selectServer(String? serverId) {
+     handle(
+       () async {
+@@ -54,15 +54,17 @@ final class ServersController extends BaseStateController<ServersState> with Seq
+ 
+         await _repository.setSelectedServerId(id: serverId);
+ 
+-        final servers = operatingServers
++        final updatedServers = operatingServers
+             .map(
+-              (e) => e.copyWith(serverData: e.serverData.copyWith(selected: e.id == serverId)),
++              (server) => server.copyWith(
++                serverData: server.serverData.copyWith(selected: server.id == serverId),
++              ),
+             )
+-            .toList();
++            .toList(growable: false);
+ 
+         setState(
+           ServersState.idle(
+-            servers: servers,
++            servers: updatedServers,
+           ),
+         );
+       },
+diff --git a/lib/feature/server/servers/controller/servers_states.dart b/lib/feature/server/servers/controller/servers_states.dart
+index 12819b3..ddbc104 100644
+--- a/lib/feature/server/servers/controller/servers_states.dart
++++ b/lib/feature/server/servers/controller/servers_states.dart
+@@ -32,8 +32,7 @@ sealed class ServersState {
+ 
+   Server? get selectedServer => servers.firstWhereOrNull((e) => e.serverData.selected);
+ 
+-
+-  PresentationError? get error => this is _ErrorServersState ? (this as _ErrorServersState).error : null;
++  PresentationError? get error => this is _ErrorServersState ? (this as _ErrorServersState).exception : null;
+ 
+   bool get loading => this is _LoadingServersState;
+ }
+diff --git a/lib/shared_constants.dart b/lib/shared_constants.dart
+new file mode 100644
+index 0000000..5e3e1dd
+--- /dev/null
++++ b/lib/shared_constants.dart
+@@ -0,0 +1,2 @@
++const String kDefaultRoutingProfileId = '0';
++const String kSpicFinServerId = '1';
+diff --git a/plugins/vpn_plugin/android/src/main/AndroidManifest.xml b/plugins/vpn_plugin/android/src/main/AndroidManifest.xml
+index 76821e9..97a2d86 100644
+--- a/plugins/vpn_plugin/android/src/main/AndroidManifest.xml
++++ b/plugins/vpn_plugin/android/src/main/AndroidManifest.xml
+@@ -3,6 +3,7 @@
+     package="com.adguard.trusttunnel.vpn_plugin">
+ 
+     <uses-permission android:name="android.permission.INTERNET" />
++    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED" />
+ 
+@@ -12,7 +13,7 @@
+             android:exported="false" />
+ 
+         <service
+-            android:name="com.adguard.trusttunnel.VpnService"
++            android:name="com.adguard.trusttunnel.vpn_plugin.SplitTunnelVpnService"
+             android:permission="android.permission.BIND_VPN_SERVICE"
+             android:foregroundServiceType="systemExempted"
+             android:exported="false">
+@@ -20,5 +21,19 @@
+                 <action android:name="android.net.VpnService" />
+             </intent-filter>
+         </service>
++
++        <service
++            android:name="com.adguard.trusttunnel.vpn_plugin.SpicQuickSettingsTileService"
++            android:exported="true"
++            android:icon="@drawable/ic_spic_notification_shield"
++            android:label="SPIC"
++            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
++            <intent-filter>
++                <action android:name="android.service.quicksettings.action.QS_TILE" />
++            </intent-filter>
++            <meta-data
++                android:name="android.service.quicksettings.TOGGLEABLE_TILE"
++                android:value="true" />
++        </service>
+     </application>
+-</manifest>
+\ No newline at end of file
++</manifest>
+diff --git a/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/InstalledAppsProvider.kt b/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/InstalledAppsProvider.kt
+new file mode 100644
+index 0000000..8e3a5a0
+--- /dev/null
++++ b/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/InstalledAppsProvider.kt
+@@ -0,0 +1,122 @@
++package com.adguard.trusttunnel.vpn_plugin
++
++import android.content.pm.ApplicationInfo
++import android.content.pm.PackageManager
++import android.graphics.Bitmap
++import android.graphics.Canvas
++import android.graphics.Matrix
++import android.graphics.drawable.BitmapDrawable
++import android.graphics.drawable.Drawable
++import android.os.Build
++import android.util.Log
++import java.io.ByteArrayOutputStream
++
++object InstalledAppsProvider {
++    private const val MAX_ICON_SIZE_PX = 96
++
++    fun loadInstalledApps(
++        context: android.content.Context,
++        includeSystemApps: Boolean,
++    ): List<InstalledAppInfo> {
++        val packageManager = context.packageManager
++        val installedApps = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
++            packageManager.getInstalledApplications(
++                PackageManager.ApplicationInfoFlags.of(0),
++            )
++        } else {
++            @Suppress("DEPRECATION")
++            packageManager.getInstalledApplications(0)
++        }
++
++        return installedApps
++            .asSequence()
++            .mapNotNull { appInfo ->
++                val packageName = appInfo.packageName
++                if (packageName.isBlank()) {
++                    return@mapNotNull null
++                }
++
++                val isSystemApp = appInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0
++                val isUpdatedSystemApp =
++                    appInfo.flags and ApplicationInfo.FLAG_UPDATED_SYSTEM_APP != 0
++                val treatedAsSystemApp = isSystemApp && !isUpdatedSystemApp
++
++                if (!includeSystemApps && treatedAsSystemApp) {
++                    return@mapNotNull null
++                }
++
++                val appName = try {
++                    packageManager.getApplicationLabel(appInfo).toString()
++                } catch (t: Throwable) {
++                    Log.w("VPN_PLUGIN", "Failed to resolve label for $packageName", t)
++                    packageName
++                }
++
++                InstalledAppInfo(
++                    packageName = packageName,
++                    appName = appName,
++                    systemApp = treatedAsSystemApp,
++                    iconBytes = drawableToPngBytes(
++                        try {
++                            packageManager.getApplicationIcon(appInfo)
++                        } catch (t: Throwable) {
++                            Log.w("VPN_PLUGIN", "Failed to resolve icon for $packageName", t)
++                            null
++                        },
++                    ),
++                )
++            }
++            .distinctBy { it.packageName }
++            .sortedWith(
++                compareBy<InstalledAppInfo> { it.appName.lowercase() }
++                    .thenBy { it.packageName.lowercase() },
++            )
++            .toList()
++    }
++
++    private fun drawableToPngBytes(drawable: Drawable?): ByteArray? {
++        drawable ?: return null
++
++        val sourceBitmap = if (drawable is BitmapDrawable && drawable.bitmap != null) {
++            drawable.bitmap
++        } else {
++            val width = drawable.intrinsicWidth.takeIf { it > 0 } ?: 96
++            val height = drawable.intrinsicHeight.takeIf { it > 0 } ?: 96
++            Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).also { bitmap ->
++                val canvas = Canvas(bitmap)
++                drawable.setBounds(0, 0, canvas.width, canvas.height)
++                drawable.draw(canvas)
++            }
++        }
++
++        val bitmap = scaleBitmapDown(sourceBitmap)
++
++        return ByteArrayOutputStream().use { stream ->
++            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
++            stream.toByteArray()
++        }
++    }
++
++    private fun scaleBitmapDown(bitmap: Bitmap): Bitmap {
++        if (bitmap.width <= MAX_ICON_SIZE_PX && bitmap.height <= MAX_ICON_SIZE_PX) {
++            return bitmap
++        }
++
++        val scale = minOf(
++            MAX_ICON_SIZE_PX.toFloat() / bitmap.width.toFloat(),
++            MAX_ICON_SIZE_PX.toFloat() / bitmap.height.toFloat(),
++        )
++        val matrix = Matrix().apply {
++            postScale(scale, scale)
++        }
++        return Bitmap.createBitmap(
++            bitmap,
++            0,
++            0,
++            bitmap.width,
++            bitmap.height,
++            matrix,
++            true,
++        )
++    }
++}
+diff --git a/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/NativeVpnImpl.kt b/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/NativeVpnImpl.kt
+index 22a5dd5..8de6999 100644
+--- a/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/NativeVpnImpl.kt
++++ b/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/NativeVpnImpl.kt
+@@ -8,9 +8,7 @@ import android.util.Log
+ import java.util.ArrayDeque
+ import java.util.Queue
+ import com.adguard.trusttunnel.AppNotifier
+-import com.adguard.trusttunnel.VpnService
+ import io.flutter.plugin.common.EventChannel
+-import java.io.File
+ 
+ class NativeVpnImpl(
+     private val appContext: Context
+@@ -23,22 +21,25 @@ class NativeVpnImpl(
+     val queryLogHandler: QueryLogStreamHandler = QueryLogStreamHandler()
+ 
+     init {
+-        VpnService.startNetworkManager(appContext)
+-        val queryLogFile = File(appContext.filesDir, "query_log.dat")
+-        VpnService.setAppNotifier(queryLogFile, this)
++        SplitTunnelVpnService.startNetworkManager(appContext)
++        SplitTunnelRuntimeNotifier.addListener(this)
+     }
+ 
+-    fun startPrepared(ctx: Context, config: String) {
++    fun startPrepared(ctx: Context, config: String, serverName: String) {
+         Log.i("VPN_PLUGIN", "startPrepared()")
+-        VpnService.start(ctx, config)
++        SplitTunnelVpnService.start(ctx, config, serverName)
+     }
+ 
+     fun stop() {
+         Log.i("VPN_PLUGIN", "stop()")
+-        VpnService.stop(appContext)
++        SplitTunnelVpnService.stop(appContext)
+     }
+ 
+-    fun getCurrentState(): VpnManagerState = currentState
++    fun getCurrentState(): VpnManagerState = SplitTunnelRuntimeNotifier.getCurrentState()
++
++    fun dispose() {
++        SplitTunnelRuntimeNotifier.removeListener(this)
++    }
+ 
+     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+         Log.i("VPN_PLUGIN", "onListen() -> subscribe state notifier")
+@@ -116,4 +117,4 @@ class QueryLogStreamHandler : EventChannel.StreamHandler {
+             }
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/SpicQuickSettingsTileService.kt b/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/SpicQuickSettingsTileService.kt
+new file mode 100644
+index 0000000..2e425e9
+--- /dev/null
++++ b/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/SpicQuickSettingsTileService.kt
+@@ -0,0 +1,93 @@
++package com.adguard.trusttunnel.vpn_plugin
++
++import android.app.PendingIntent
++import android.content.ComponentName
++import android.content.Context
++import android.content.Intent
++import android.os.Build
++import android.service.quicksettings.Tile
++import android.service.quicksettings.TileService
++import androidx.annotation.RequiresApi
++
++@RequiresApi(Build.VERSION_CODES.N)
++class SpicQuickSettingsTileService : TileService() {
++    override fun onStartListening() {
++        super.onStartListening()
++        updateTile()
++    }
++
++    override fun onClick() {
++        super.onClick()
++
++        if (isVpnActive()) {
++            SplitTunnelVpnService.stop(applicationContext)
++            updateTile()
++            return
++        }
++
++        openSpic()
++    }
++
++    private fun updateTile() {
++        val tile = qsTile ?: return
++        val active = isVpnActive()
++        tile.label = "SPIC"
++        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
++            tile.subtitle = if (active) "Protected" else "Tap to open"
++        }
++        tile.state = if (active) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
++        tile.updateTile()
++    }
++
++    private fun openSpic() {
++        val intent = packageManager.getLaunchIntentForPackage(packageName)
++            ?: Intent()
++        intent.action = SplitTunnelVpnService.ACTION_OPEN_FROM_TILE
++        intent.putExtra(
++            SplitTunnelVpnService.PARAM_APP_ACTION,
++            SplitTunnelVpnService.ACTION_OPEN_FROM_TILE,
++        )
++        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
++
++        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
++            startActivityAndCollapse(
++                PendingIntent.getActivity(
++                    this,
++                    REQUEST_OPEN_SPIC,
++                    intent,
++                    pendingIntentFlags(),
++                ),
++            )
++        } else {
++            @Suppress("DEPRECATION")
++            startActivityAndCollapse(intent)
++        }
++    }
++
++    private fun isVpnActive(): Boolean {
++        return SplitTunnelRuntimeNotifier.getCurrentState() != VpnManagerState.DISCONNECTED
++    }
++
++    private fun pendingIntentFlags(): Int {
++        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
++            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
++        } else {
++            PendingIntent.FLAG_UPDATE_CURRENT
++        }
++    }
++
++    companion object {
++        private const val REQUEST_OPEN_SPIC = 2101
++
++        fun requestTileRefresh(context: Context) {
++            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
++                return
++            }
++
++            requestListeningState(
++                context,
++                ComponentName(context, SpicQuickSettingsTileService::class.java),
++            )
++        }
++    }
++}
+diff --git a/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/SplitTunnelRuntimeNotifier.kt b/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/SplitTunnelRuntimeNotifier.kt
+new file mode 100644
+index 0000000..47d5714
+--- /dev/null
++++ b/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/SplitTunnelRuntimeNotifier.kt
+@@ -0,0 +1,43 @@
++package com.adguard.trusttunnel.vpn_plugin
++
++import com.adguard.trusttunnel.AppNotifier
++import java.util.ArrayDeque
++import java.util.concurrent.CopyOnWriteArraySet
++
++object SplitTunnelRuntimeNotifier {
++    private const val MAX_LOGS = 200
++    private val listeners = CopyOnWriteArraySet<AppNotifier>()
++    private val recentLogs = ArrayDeque<String>()
++
++    @Volatile
++    private var currentState: VpnManagerState = VpnManagerState.DISCONNECTED
++
++    fun addListener(listener: AppNotifier) {
++        listeners.add(listener)
++        listener.onStateChanged(currentState.raw)
++        synchronized(recentLogs) {
++            recentLogs.forEach(listener::onConnectionInfo)
++        }
++    }
++
++    fun removeListener(listener: AppNotifier) {
++        listeners.remove(listener)
++    }
++
++    fun onStateChanged(state: Int) {
++        currentState = VpnManagerState.ofRaw(state) ?: VpnManagerState.DISCONNECTED
++        listeners.forEach { it.onStateChanged(currentState.raw) }
++    }
++
++    fun onConnectionInfo(info: String) {
++        synchronized(recentLogs) {
++            if (recentLogs.size >= MAX_LOGS) {
++                recentLogs.removeFirst()
++            }
++            recentLogs.addLast(info)
++        }
++        listeners.forEach { it.onConnectionInfo(info) }
++    }
++
++    fun getCurrentState(): VpnManagerState = currentState
++}
+diff --git a/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/SplitTunnelStore.kt b/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/SplitTunnelStore.kt
+new file mode 100644
+index 0000000..578c430
+--- /dev/null
++++ b/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/SplitTunnelStore.kt
+@@ -0,0 +1,34 @@
++package com.adguard.trusttunnel.vpn_plugin
++
++import android.content.Context
++
++object SplitTunnelStore {
++    private const val PREFS_NAME = "split_tunnel_store"
++    private const val KEY_BYPASSED_PACKAGES = "bypassed_packages"
++
++    fun load(context: Context): List<String> {
++        val values = context
++            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
++            .getStringSet(KEY_BYPASSED_PACKAGES, emptySet())
++            .orEmpty()
++            .toSet()
++            .filter { it.isNotBlank() }
++            .toMutableList()
++
++        values.sort()
++        return values
++    }
++
++    fun save(context: Context, packageNames: List<String>) {
++        val sanitized = packageNames
++            .map { it.trim() }
++            .filter { it.isNotEmpty() }
++            .toSet()
++
++        context
++            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
++            .edit()
++            .putStringSet(KEY_BYPASSED_PACKAGES, sanitized)
++            .commit()
++    }
++}
+diff --git a/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/SplitTunnelVpnService.kt b/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/SplitTunnelVpnService.kt
+new file mode 100644
+index 0000000..f7021ab
+--- /dev/null
++++ b/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/SplitTunnelVpnService.kt
+@@ -0,0 +1,500 @@
++package com.adguard.trusttunnel.vpn_plugin
++
++import android.app.Notification
++import android.app.NotificationChannel
++import android.app.NotificationManager
++import android.app.PendingIntent
++import android.content.Context
++import android.content.Intent
++import android.content.pm.ServiceInfo
++import android.net.ConnectivityManager
++import android.net.NetworkRequest
++import android.os.Build
++import android.os.ParcelFileDescriptor
++import android.util.Log
++import androidx.core.app.NotificationCompat
++import com.adguard.trusttunnel.CertificateVerificator
++import com.adguard.trusttunnel.Listener
++import com.adguard.trusttunnel.Tun
++import com.adguard.trusttunnel.VpnClient
++import com.adguard.trusttunnel.VpnClientListener
++import com.adguard.trusttunnel.VpnConfigStorage
++import com.adguard.trusttunnel.VpnServiceConfig
++import com.adguard.trusttunnel.utils.NetworkUtils
++import java.util.concurrent.Executors
++import java.util.concurrent.ScheduledExecutorService
++
++class SplitTunnelVpnService : android.net.VpnService(), VpnClientListener {
++    private enum class State {
++        Stopped,
++        Started,
++    }
++
++    private var state = State.Stopped
++    private val singleThread: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
++    private var certificateVerificator: CertificateVerificator? = null
++    private var activeNotificationProfile: NotificationProfile = NotificationProfile()
++
++    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
++        synchronized(SYNC) {
++            if (intent == null) {
++                stopSelf()
++                return START_NOT_STICKY
++            }
++
++            activeNotificationProfile = notificationProfileFrom(intent)
++            val notification = createNotification(
++                applicationContext,
++                activeNotificationProfile,
++                VpnManagerState.CONNECTING,
++            )
++            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
++                startForeground(
++                    NOTIFICATION_ID,
++                    notification,
++                    ServiceInfo.FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED,
++                )
++            } else {
++                startForeground(NOTIFICATION_ID, notification)
++            }
++
++            singleThread.execute {
++                currentStartId = startId
++                try {
++                    when (intent.action) {
++                        ACTION_START -> processStarting(intent.getStringExtra(PARAM_CONFIG), startId)
++                        ACTION_STOP -> close(startId)
++                        else -> processStarting(getConfigStorage(applicationContext).load(), startId)
++                    }
++                } catch (t: Throwable) {
++                    Log.e(LOG_TAG, "Error while executing VPN command", t)
++                    close(startId)
++                }
++            }
++
++            return START_NOT_STICKY
++        }
++    }
++
++    override fun onRevoke() {
++        singleThread.execute { close(null) }
++    }
++
++    override fun protectSocket(socketFd: Int): Boolean = protect(socketFd)
++
++    override fun verifyCertificate(
++        certificate: ByteArray?,
++        rawChain: List<ByteArray?>?,
++    ): Boolean {
++        val actualCertificate = certificate ?: return true
++        val actualChain = rawChain?.filterNotNull() ?: emptyList()
++        return certificateVerificator?.verifyCertificate(actualCertificate, actualChain) ?: true
++    }
++
++    override fun onStateChanged(state: Int) {
++        SplitTunnelRuntimeNotifier.onStateChanged(state)
++        updateNotification(VpnManagerState.ofRaw(state) ?: VpnManagerState.DISCONNECTED)
++        SpicQuickSettingsTileService.requestTileRefresh(applicationContext)
++        if (state == VpnManagerState.DISCONNECTED.raw && this.state == State.Started) {
++            singleThread.execute { close(null) }
++        }
++    }
++
++    override fun onConnectionInfo(info: String) {
++        SplitTunnelRuntimeNotifier.onConnectionInfo(info)
++    }
++
++    private fun processStarting(config: String?, startId: Int) {
++        synchronized(SYNC) {
++            if (state == State.Started) {
++                return
++            }
++            if (config.isNullOrBlank()) {
++                Log.e(LOG_TAG, "Failed to get VPN config settings")
++                close(startId)
++                return
++            }
++
++            val parsedConfig = VpnServiceConfig.Companion.parseToml(config)
++            if (parsedConfig == null) {
++                Log.e(LOG_TAG, "Failed to parse VPN config")
++                close(startId)
++                return
++            }
++
++            certificateVerificator = try {
++                CertificateVerificator()
++            } catch (t: Throwable) {
++                Log.e(LOG_TAG, "Failed to create certificate verificator", t)
++                close(startId)
++                return
++            }
++
++            SplitTunnelRuntimeNotifier.onStateChanged(VpnManagerState.CONNECTING.raw)
++            updateNotification(VpnManagerState.CONNECTING)
++
++            val tunInterface = createTunInterface(parsedConfig)
++            if (tunInterface == null) {
++                close(startId)
++                return
++            }
++
++            val client = VpnClient(config, this)
++            vpnClient = client
++            networkCallback?.startNotifying(client)
++
++            if (!client.start(tunInterface)) {
++                Log.e(LOG_TAG, "Failed to start VPN client")
++                close(startId)
++                return
++            }
++
++            activeTun = tunInterface
++            state = State.Started
++        }
++    }
++
++    private fun createTunInterface(config: VpnServiceConfig): ParcelFileDescriptor? {
++        return try {
++            val tun = config.listener.tun
++            val builder = Builder()
++                .setSession("Trust Tunnel")
++                .setMtu(tun.mtuSize.toInt())
++                .addAddress("172.20.2.13", 32)
++                .addAddress("fdfd:29::2", 64)
++
++            val disallowedPackages = buildSet {
++                add(packageName)
++                addAll(SplitTunnelStore.load(applicationContext))
++            }
++            Log.i(
++                LOG_TAG,
++                "Applying split tunnel bypass packages: ${disallowedPackages.joinToString()}",
++            )
++
++            for (packageName in disallowedPackages) {
++                try {
++                    builder.addDisallowedApplication(packageName)
++                } catch (t: Throwable) {
++                    Log.w(LOG_TAG, "Failed to disallow package $packageName", t)
++                }
++            }
++
++            val dnsServers = if (config.endpoint.dnsUpstreams.isEmpty()) {
++                ADGUARD_DNS_SERVERS
++            } else {
++                FAKE_DNS_SERVER
++            }
++            dnsServers.forEach(builder::addDnsServer)
++
++            val routes = VpnClient.Companion.excludeCidr(
++                tun.includedRoutes,
++                tun.excludedRoutes + IPV4_NON_ROUTABLE,
++            ) ?: throw IllegalStateException("Failed to process routes")
++
++            for (route in routes) {
++                val pair = NetworkUtils.Companion.convertCidrToAddressPrefixPair(route)
++                    ?: throw IllegalArgumentException("Wrong syntax for included_routes")
++                builder.addRoute(pair.first, pair.second)
++            }
++
++            builder.establish()
++        } catch (t: Throwable) {
++            Log.e(LOG_TAG, "Error while building the TUN interface", t)
++            null
++        }
++    }
++
++    private fun close(startId: Int?): Boolean {
++        synchronized(SYNC) {
++            state = State.Stopped
++            val callback = networkCallback
++            try {
++                callback?.stopNotifying()
++            } catch (t: Throwable) {
++                Log.w(LOG_TAG, "Failed to stop network notifier", t)
++            }
++
++            try {
++                vpnClient?.stop()
++                vpnClient?.close()
++            } catch (t: Throwable) {
++                Log.w(LOG_TAG, "Failed to stop VPN client", t)
++            } finally {
++                vpnClient = null
++            }
++
++            try {
++                activeTun?.close()
++            } catch (t: Throwable) {
++                Log.w(LOG_TAG, "Failed to close TUN interface", t)
++            } finally {
++                activeTun = null
++            }
++
++            certificateVerificator = null
++            SplitTunnelRuntimeNotifier.onStateChanged(VpnManagerState.DISCONNECTED.raw)
++            SpicQuickSettingsTileService.requestTileRefresh(applicationContext)
++
++            stopForeground(STOP_FOREGROUND_REMOVE)
++            if (startId == null || startId == currentStartId) {
++                stopSelf()
++            }
++            return true
++        }
++    }
++
++    private fun updateNotification(state: VpnManagerState) {
++        val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
++        notificationManager.notify(
++            NOTIFICATION_ID,
++            createNotification(applicationContext, activeNotificationProfile, state),
++        )
++    }
++
++    private fun createNotification(
++        context: Context,
++        profile: NotificationProfile,
++        state: VpnManagerState,
++    ): Notification {
++        val channelId = "SpicConnectionStatus"
++        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
++        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
++            val channel = NotificationChannel(
++                channelId,
++                "SPIC protection status",
++                NotificationManager.IMPORTANCE_LOW,
++            )
++            channel.description = "SPIC VPN foreground protection status"
++            notificationManager.createNotificationChannel(channel)
++        }
++
++        val routeLabel = when {
++            profile.externalRoute -> "External lower-trust route"
++            profile.secureRoute -> "Secure route"
++            else -> "Stable route"
++        }
++        val dnsLabel = if (profile.dnsProtected) "DNS protected" else "DNS pending"
++        val stateLabel = when (state) {
++            VpnManagerState.CONNECTING -> "Preparing protection"
++            VpnManagerState.CONNECTED -> "$routeLabel - $dnsLabel"
++            VpnManagerState.WAITING_FOR_RECOVERY,
++            VpnManagerState.RECOVERING,
++            VpnManagerState.WAITING_FOR_NETWORK -> "Reconnecting securely - $dnsLabel"
++            VpnManagerState.DISCONNECTED -> "Protection stopped"
++        }
++
++        return NotificationCompat.Builder(context, channelId)
++            .setContentTitle("SPIC protection active")
++            .setContentText(stateLabel)
++            .setStyle(
++                NotificationCompat.BigTextStyle().bigText(
++                    "$stateLabel\n${profile.serverName}",
++                ),
++            )
++            .setSmallIcon(R.drawable.ic_spic_notification_shield)
++            .setContentIntent(openAppIntent(context, ACTION_OPEN_MAIN))
++            .setPriority(NotificationCompat.PRIORITY_LOW)
++            .setCategory(NotificationCompat.CATEGORY_SERVICE)
++            .setOngoing(true)
++            .addAction(
++                R.drawable.ic_spic_notification_shield,
++                "Diagnostics",
++                openAppIntent(context, ACTION_OPEN_DIAGNOSTICS),
++            )
++            .addAction(
++                R.drawable.ic_spic_notification_shield,
++                "Disconnect",
++                serviceActionIntent(context, ACTION_STOP),
++            )
++            .build()
++    }
++
++    private fun notificationProfileFrom(intent: Intent): NotificationProfile {
++        val config = intent.getStringExtra(PARAM_CONFIG).orEmpty()
++        val serverName = intent.getStringExtra(PARAM_SERVER_NAME)
++            ?.takeIf { it.isNotBlank() }
++            ?: "SPIC"
++        val hostname = Regex("hostname\\s*=\\s*\"([^\"]*)\"")
++            .find(config)
++            ?.groupValues
++            ?.getOrNull(1)
++            ?.lowercase()
++            .orEmpty()
++        val addresses = Regex("""addresses\s*=\s*\[(.*?)\]""", RegexOption.DOT_MATCHES_ALL)
++            .find(config)
++            ?.groupValues
++            ?.getOrNull(1)
++            .orEmpty()
++            .lowercase()
++        val dnsUpstreams = Regex("""dns_upstreams\s*=\s*\[(.*?)\]""", RegexOption.DOT_MATCHES_ALL)
++            .find(config)
++            ?.groupValues
++            ?.getOrNull(1)
++            .orEmpty()
++        val antiDpi = Regex("""anti_dpi\s*=\s*(true|false)""", RegexOption.IGNORE_CASE)
++            .find(config)
++            ?.groupValues
++            ?.getOrNull(1)
++            ?.equals("true", ignoreCase = true)
++            ?: false
++        val fallbackProtocol = Regex("upstream_fallback_protocol\\s*=\\s*\"([^\"]*)\"")
++            .find(config)
++            ?.groupValues
++            ?.getOrNull(1)
++            .orEmpty()
++        val trustedRoute = hostname == "stop2virus.xyz" ||
++            addresses.contains("185.236.24.249")
++
++        return NotificationProfile(
++            serverName = serverName,
++            externalRoute = !trustedRoute,
++            dnsProtected = dnsUpstreams.isNotBlank(),
++            secureRoute = trustedRoute && (antiDpi || fallbackProtocol.isNotBlank()),
++        )
++    }
++
++    private fun openAppIntent(context: Context, action: String): PendingIntent {
++        val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
++            ?: Intent()
++        intent.action = action
++        intent.putExtra(PARAM_APP_ACTION, action)
++        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
++        return PendingIntent.getActivity(
++            context,
++            action.hashCode(),
++            intent,
++            pendingIntentFlags(),
++        )
++    }
++
++    private fun serviceActionIntent(context: Context, action: String): PendingIntent {
++        val intent = Intent(context, SplitTunnelVpnService::class.java).setAction(action)
++        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
++            PendingIntent.getForegroundService(
++                context,
++                action.hashCode(),
++                intent,
++                pendingIntentFlags(),
++            )
++        } else {
++            PendingIntent.getService(
++                context,
++                action.hashCode(),
++                intent,
++                pendingIntentFlags(),
++            )
++        }
++    }
++
++    private fun pendingIntentFlags(): Int {
++        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
++            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
++        } else {
++            PendingIntent.FLAG_UPDATE_CURRENT
++        }
++    }
++
++    private data class NotificationProfile(
++        val serverName: String = "SPIC",
++        val externalRoute: Boolean = false,
++        val dnsProtected: Boolean = true,
++        val secureRoute: Boolean = true,
++    )
++
++    companion object {
++        private const val LOG_TAG = "VPN_PLUGIN"
++        private const val ACTION_START = "Start"
++        private const val ACTION_STOP = "Stop"
++        const val ACTION_OPEN_MAIN = "com.example.spic.action.OPEN_MAIN"
++        const val ACTION_OPEN_DIAGNOSTICS = "com.example.spic.action.OPEN_DIAGNOSTICS"
++        const val ACTION_OPEN_FROM_TILE = "com.example.spic.action.OPEN_FROM_TILE"
++        private const val PARAM_CONFIG = "Config Extra"
++        private const val PARAM_SERVER_NAME = "Server Name"
++        const val PARAM_APP_ACTION = "spic_action"
++        private const val NOTIFICATION_ID = 1
++
++        private val SYNC = Any()
++        private val IPV4_NON_ROUTABLE = listOf("0.0.0.0/8", "224.0.0.0/3")
++        private val ADGUARD_DNS_SERVERS = listOf(
++            "46.243.231.30",
++            "46.243.231.31",
++            "2a10:50c0::2:ff",
++            "2a10:50c0::1:ff",
++        )
++        private val FAKE_DNS_SERVER = listOf("198.18.53.53")
++
++        private var currentStartId: Int = -1
++        private var vpnClient: VpnClient? = null
++        private var activeTun: ParcelFileDescriptor? = null
++        private var configStorage: VpnConfigStorage? = null
++        private var connectivityManager: ConnectivityManager? = null
++        private var networkRequest: NetworkRequest? = null
++        private var networkCallback: NetworkUtils.Companion.NetworkCollector? = null
++
++        fun start(context: Context, config: String, serverName: String) {
++            start(context, ACTION_START, config, serverName)
++        }
++
++        fun stop(context: Context) {
++            getConfigStorage(context).clear()
++            start(context, ACTION_STOP, null, null)
++        }
++
++        fun startNetworkManager(context: Context) {
++            if (networkCallback != null) {
++                return
++            }
++
++            connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
++            networkRequest = NetworkRequest.Builder()
++                .addCapability(12)
++                .addCapability(15)
++                .addTransportType(3)
++                .addTransportType(1)
++                .addTransportType(0)
++                .addTransportType(2)
++                .build()
++            networkCallback = NetworkUtils.Companion.NetworkCollector()
++
++            connectivityManager?.registerNetworkCallback(
++                networkRequest ?: return,
++                networkCallback ?: return,
++            )
++        }
++
++        fun isPrepared(context: Context): Boolean {
++            return try {
++                prepare(context) == null
++            } catch (t: Throwable) {
++                Log.e(LOG_TAG, "Error while checking VPN service preparation", t)
++                false
++            }
++        }
++
++        private fun start(context: Context, action: String, config: String?, serverName: String?) {
++            if (!isPrepared(context)) {
++                Log.w(LOG_TAG, "VPN is not prepared, can't manipulate the service")
++                return
++            }
++
++            try {
++                val intent = Intent(context, SplitTunnelVpnService::class.java).setAction(action)
++                if (config != null) {
++                    getConfigStorage(context).save(config)
++                    intent.putExtra(PARAM_CONFIG, config)
++                }
++                if (serverName != null) {
++                    intent.putExtra(PARAM_SERVER_NAME, serverName)
++                }
++                context.startForegroundService(intent)
++            } catch (t: Throwable) {
++                Log.e(LOG_TAG, "Error occurred while service starting", t)
++            }
++        }
++
++        private fun getConfigStorage(context: Context): VpnConfigStorage {
++            return configStorage ?: VpnConfigStorage(context).also { configStorage = it }
++        }
++    }
++}
+diff --git a/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/VpnPlugin.kt b/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/VpnPlugin.kt
+index f8fe3cd..504dca1 100644
+--- a/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/VpnPlugin.kt
++++ b/plugins/vpn_plugin/android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/VpnPlugin.kt
+@@ -35,6 +35,7 @@ class VpnPlugin :
+     private lateinit var deepLinkImpl: DeepLinkImpl
+ 
+     private var pendingConfig: String? = null
++    private var pendingServerName: String? = null
+ 
+     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+         appContext = binding.applicationContext
+@@ -58,6 +59,7 @@ class VpnPlugin :
+     }
+ 
+     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
++        vpnImpl.dispose()
+         stateChannel?.setStreamHandler(null)
+         queryLogChannel?.setStreamHandler(null)
+         stateChannel = null
+@@ -88,8 +90,9 @@ class VpnPlugin :
+             pendingConfig = null
+             if (cfg != null && resultCode == Activity.RESULT_OK) {
+                 val ctx = activity ?: appContext
+-                vpnImpl.startPrepared(ctx, cfg)
++                vpnImpl.startPrepared(ctx, cfg, pendingServerName ?: "SPIC")
+             }
++            pendingServerName = null
+             return true
+         }
+         return false
+@@ -100,15 +103,16 @@ class VpnPlugin :
+         if (act != null) {
+             val prepare = AndroidVpnService.prepare(act)
+             if (prepare == null) {
+-                vpnImpl.startPrepared(act, config)
++                vpnImpl.startPrepared(act, config, serverName)
+             } else {
+                 pendingConfig = config
++                pendingServerName = serverName
+                 act.startActivityForResult(prepare, REQ_VPN_PREPARE)
+             }
+         } else {
+             val prepare = AndroidVpnService.prepare(appContext)
+             if (prepare == null) {
+-                vpnImpl.startPrepared(appContext, config)
++                vpnImpl.startPrepared(appContext, config, serverName)
+             }
+         }
+     }
+@@ -117,6 +121,18 @@ class VpnPlugin :
+         vpnImpl.stop()
+     }
+ 
++    override fun getInstalledApps(includeSystemApps: Boolean): List<InstalledAppInfo> {
++        return InstalledAppsProvider.loadInstalledApps(appContext, includeSystemApps)
++    }
++
++    override fun setBypassedPackages(packageNames: List<String>) {
++        SplitTunnelStore.save(appContext, packageNames)
++    }
++
++    override fun getBypassedPackages(): List<String> {
++        return SplitTunnelStore.load(appContext)
++    }
++
+     override fun updateConfiguration(serverName: String?, config: String?) {
+         // Do nothing, this is iOS specific
+     }
+@@ -124,4 +140,4 @@ class VpnPlugin :
+     override fun getCurrentState(): VpnManagerState {
+         return vpnImpl.getCurrentState()
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/plugins/vpn_plugin/android/src/main/res/drawable/ic_spic_notification_shield.xml b/plugins/vpn_plugin/android/src/main/res/drawable/ic_spic_notification_shield.xml
+new file mode 100644
+index 0000000..ddf51bf
+--- /dev/null
++++ b/plugins/vpn_plugin/android/src/main/res/drawable/ic_spic_notification_shield.xml
+@@ -0,0 +1,13 @@
++<?xml version="1.0" encoding="utf-8"?>
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24">
++    <path
++        android:fillColor="@android:color/white"
++        android:pathData="M12,2.2L20,5.4V11.2C20,16.3 16.6,20.6 12,22C7.4,20.6 4,16.3 4,11.2V5.4L12,2.2ZM12,4.6L6.2,6.9V11.2C6.2,15.1 8.6,18.4 12,19.6C15.4,18.4 17.8,15.1 17.8,11.2V6.9L12,4.6Z" />
++    <path
++        android:fillColor="@android:color/white"
++        android:pathData="M10.8,7.8H13.2V10.8H16.2V13.2H13.2V16.2H10.8V13.2H7.8V10.8H10.8V7.8Z" />
++</vector>
+diff --git a/plugins/vpn_plugin/ios/Classes/PlatformApi.g.swift b/plugins/vpn_plugin/ios/Classes/PlatformApi.g.swift
+new file mode 100644
+index 0000000..2aa9370
+--- /dev/null
++++ b/plugins/vpn_plugin/ios/Classes/PlatformApi.g.swift
+@@ -0,0 +1,666 @@
++// Autogenerated from Pigeon (v26.1.4), do not edit directly.
++// See also: https://pub.dev/packages/pigeon
++
++import Foundation
++
++#if os(iOS)
++  import Flutter
++#elseif os(macOS)
++  import FlutterMacOS
++#else
++  #error("Unsupported platform.")
++#endif
++
++/// Error class for passing custom error details to Dart side.
++final class PigeonError: Error {
++  let code: String
++  let message: String?
++  let details: Sendable?
++
++  init(code: String, message: String?, details: Sendable?) {
++    self.code = code
++    self.message = message
++    self.details = details
++  }
++
++  var localizedDescription: String {
++    return
++      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
++  }
++}
++
++private func wrapResult(_ result: Any?) -> [Any?] {
++  return [result]
++}
++
++private func wrapError(_ error: Any) -> [Any?] {
++  if let pigeonError = error as? PigeonError {
++    return [
++      pigeonError.code,
++      pigeonError.message,
++      pigeonError.details,
++    ]
++  }
++  if let flutterError = error as? FlutterError {
++    return [
++      flutterError.code,
++      flutterError.message,
++      flutterError.details,
++    ]
++  }
++  return [
++    "\(error)",
++    "\(type(of: error))",
++    "Stacktrace: \(Thread.callStackSymbols)",
++  ]
++}
++
++private func isNullish(_ value: Any?) -> Bool {
++  return value is NSNull || value == nil
++}
++
++private func nilOrValue<T>(_ value: Any?) -> T? {
++  if value is NSNull { return nil }
++  return value as! T?
++}
++
++func deepEqualsPlatformApi(_ lhs: Any?, _ rhs: Any?) -> Bool {
++  let cleanLhs = nilOrValue(lhs) as Any?
++  let cleanRhs = nilOrValue(rhs) as Any?
++  switch (cleanLhs, cleanRhs) {
++  case (nil, nil):
++    return true
++
++  case (nil, _), (_, nil):
++    return false
++
++  case is (Void, Void):
++    return true
++
++  case let (cleanLhsHashable, cleanRhsHashable) as (AnyHashable, AnyHashable):
++    return cleanLhsHashable == cleanRhsHashable
++
++  case let (cleanLhsArray, cleanRhsArray) as ([Any?], [Any?]):
++    guard cleanLhsArray.count == cleanRhsArray.count else { return false }
++    for (index, element) in cleanLhsArray.enumerated() {
++      if !deepEqualsPlatformApi(element, cleanRhsArray[index]) {
++        return false
++      }
++    }
++    return true
++
++  case let (cleanLhsDictionary, cleanRhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
++    guard cleanLhsDictionary.count == cleanRhsDictionary.count else { return false }
++    for (key, cleanLhsValue) in cleanLhsDictionary {
++      guard cleanRhsDictionary.index(forKey: key) != nil else { return false }
++      if !deepEqualsPlatformApi(cleanLhsValue, cleanRhsDictionary[key]!) {
++        return false
++      }
++    }
++    return true
++
++  default:
++    // Any other type shouldn't be able to be used with pigeon. File an issue if you find this to be untrue.
++    return false
++  }
++}
++
++func deepHashPlatformApi(value: Any?, hasher: inout Hasher) {
++  if let valueList = value as? [AnyHashable] {
++     for item in valueList { deepHashPlatformApi(value: item, hasher: &hasher) }
++     return
++  }
++
++  if let valueDict = value as? [AnyHashable: AnyHashable] {
++    for key in valueDict.keys {
++      hasher.combine(key)
++      deepHashPlatformApi(value: valueDict[key]!, hasher: &hasher)
++    }
++    return
++  }
++
++  if let hashableValue = value as? AnyHashable {
++    hasher.combine(hashableValue.hashValue)
++  }
++
++  return hasher.combine(String(describing: value))
++}
++
++
++
++/// {@template vpn_manager_state}
++/// Current state of the platform VPN engine.
++///
++/// This enum models the high-level lifecycle of the VPN service/engine as seen
++/// from Dart. Implementations may have additional internal substates; they should
++/// be mapped onto these public states in a consistent way.
++///
++/// ## Typical state flow
++/// - [disconnected] → [connecting] → [connected]
++/// - On transient failure: [connected] → [waitingForRecovery] → [recovering]
++/// - When network is unavailable: [connecting] or [recovering] → [waitingForNetwork]
++///
++/// The exact transitions and timing depend on the platform implementation.
++/// {@endtemplate}
++enum VpnManagerState: Int {
++  case disconnected = 0
++  case connecting = 1
++  case connected = 2
++  case waitingForRecovery = 3
++  case recovering = 4
++  case waitingForNetwork = 5
++}
++
++/// {@template platform_error_code}
++/// High-level error category returned by platform implementations.
++///
++/// This is intended for coarse error classification suitable for UI messaging
++/// and analytics. More specific errors may be provided via [PlatformFieldError].
++/// {@endtemplate}
++enum PlatformErrorCode: Int {
++  case unknown = 0
++}
++
++/// {@template platform_field_error_code}
++/// Error category for a specific user-visible field.
++///
++/// Field errors are typically used to attach validation errors to individual
++/// configuration inputs (e.g. invalid IP address).
++/// {@endtemplate}
++enum PlatformFieldErrorCode: Int {
++  case fieldWrongValue = 0
++  case alreadyExists = 1
++}
++
++/// {@template platform_field_name}
++/// Identifies which input field a [PlatformFieldError] refers to.
++///
++/// The field set is intentionally limited to values that are meaningful to
++/// external consumers and stable across platforms.
++/// {@endtemplate}
++enum PlatformFieldName: Int {
++  case ipAddress = 0
++  case domain = 1
++  case serverName = 2
++  case dnsServers = 3
++}
++
++/// Generated class from Pigeon that represents data sent in messages.
++struct InstalledAppInfo: Hashable {
++  var packageName: String
++  var appName: String
++  var systemApp: Bool
++  var iconBytes: FlutterStandardTypedData? = nil
++
++
++  // swift-format-ignore: AlwaysUseLowerCamelCase
++  static func fromList(_ pigeonVar_list: [Any?]) -> InstalledAppInfo? {
++    let packageName = pigeonVar_list[0] as! String
++    let appName = pigeonVar_list[1] as! String
++    let systemApp = pigeonVar_list[2] as! Bool
++    let iconBytes: FlutterStandardTypedData? = nilOrValue(pigeonVar_list[3])
++
++    return InstalledAppInfo(
++      packageName: packageName,
++      appName: appName,
++      systemApp: systemApp,
++      iconBytes: iconBytes
++    )
++  }
++  func toList() -> [Any?] {
++    return [
++      packageName,
++      appName,
++      systemApp,
++      iconBytes,
++    ]
++  }
++  static func == (lhs: InstalledAppInfo, rhs: InstalledAppInfo) -> Bool {
++    return deepEqualsPlatformApi(lhs.toList(), rhs.toList())  }
++  func hash(into hasher: inout Hasher) {
++    deepHashPlatformApi(value: toList(), hasher: &hasher)
++  }
++}
++
++/// {@template platform_error_response}
++/// Structured error payload returned by platform implementations.
++///
++/// This model supports two levels of error reporting:
++/// - a top-level [code] for general classification,
++/// - optional per-field validation errors in [fieldErrors].
++///
++/// Both fields are nullable to support platforms that only provide partial
++/// error information.
++/// {@endtemplate}
++///
++/// Generated class from Pigeon that represents data sent in messages.
++struct PlatformErrorResponse: Hashable {
++  /// {@template platform_error_response_code}
++  /// General error category, if available.
++  /// {@endtemplate}
++  var code: PlatformErrorCode? = nil
++  /// {@template platform_error_response_field_errors}
++  /// Optional list of validation errors tied to individual fields.
++  /// {@endtemplate}
++  var fieldErrors: [PlatformFieldError?]? = nil
++
++
++  // swift-format-ignore: AlwaysUseLowerCamelCase
++  static func fromList(_ pigeonVar_list: [Any?]) -> PlatformErrorResponse? {
++    let code: PlatformErrorCode? = nilOrValue(pigeonVar_list[0])
++    let fieldErrors: [PlatformFieldError?]? = nilOrValue(pigeonVar_list[1])
++
++    return PlatformErrorResponse(
++      code: code,
++      fieldErrors: fieldErrors
++    )
++  }
++  func toList() -> [Any?] {
++    return [
++      code,
++      fieldErrors,
++    ]
++  }
++  static func == (lhs: PlatformErrorResponse, rhs: PlatformErrorResponse) -> Bool {
++    return deepEqualsPlatformApi(lhs.toList(), rhs.toList())  }
++  func hash(into hasher: inout Hasher) {
++    deepHashPlatformApi(value: toList(), hasher: &hasher)
++  }
++}
++
++/// {@template platform_field_error}
++/// Validation error associated with a particular configuration field.
++///
++/// A field error specifies:
++/// - [code] describing the kind of failure,
++/// - [fieldName] identifying which field is invalid.
++///
++/// This structure is designed for UI clients that want to show inline
++/// validation messages next to problematic fields.
++/// {@endtemplate}
++///
++/// Generated class from Pigeon that represents data sent in messages.
++struct PlatformFieldError: Hashable {
++  /// {@template platform_field_error_code_field}
++  /// Category of the field error.
++  /// {@endtemplate}
++  var code: PlatformFieldErrorCode
++  /// {@template platform_field_error_field_name}
++  /// Which field the error relates to.
++  /// {@endtemplate}
++  var fieldName: PlatformFieldName
++
++
++  // swift-format-ignore: AlwaysUseLowerCamelCase
++  static func fromList(_ pigeonVar_list: [Any?]) -> PlatformFieldError? {
++    let code = pigeonVar_list[0] as! PlatformFieldErrorCode
++    let fieldName = pigeonVar_list[1] as! PlatformFieldName
++
++    return PlatformFieldError(
++      code: code,
++      fieldName: fieldName
++    )
++  }
++  func toList() -> [Any?] {
++    return [
++      code,
++      fieldName,
++    ]
++  }
++  static func == (lhs: PlatformFieldError, rhs: PlatformFieldError) -> Bool {
++    return deepEqualsPlatformApi(lhs.toList(), rhs.toList())  }
++  func hash(into hasher: inout Hasher) {
++    deepHashPlatformApi(value: toList(), hasher: &hasher)
++  }
++}
++
++private class PlatformApiPigeonCodecReader: FlutterStandardReader {
++  override func readValue(ofType type: UInt8) -> Any? {
++    switch type {
++    case 129:
++      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
++      if let enumResultAsInt = enumResultAsInt {
++        return VpnManagerState(rawValue: enumResultAsInt)
++      }
++      return nil
++    case 130:
++      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
++      if let enumResultAsInt = enumResultAsInt {
++        return PlatformErrorCode(rawValue: enumResultAsInt)
++      }
++      return nil
++    case 131:
++      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
++      if let enumResultAsInt = enumResultAsInt {
++        return PlatformFieldErrorCode(rawValue: enumResultAsInt)
++      }
++      return nil
++    case 132:
++      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
++      if let enumResultAsInt = enumResultAsInt {
++        return PlatformFieldName(rawValue: enumResultAsInt)
++      }
++      return nil
++    case 133:
++      return InstalledAppInfo.fromList(self.readValue() as! [Any?])
++    case 134:
++      return PlatformErrorResponse.fromList(self.readValue() as! [Any?])
++    case 135:
++      return PlatformFieldError.fromList(self.readValue() as! [Any?])
++    default:
++      return super.readValue(ofType: type)
++    }
++  }
++}
++
++private class PlatformApiPigeonCodecWriter: FlutterStandardWriter {
++  override func writeValue(_ value: Any) {
++    if let value = value as? VpnManagerState {
++      super.writeByte(129)
++      super.writeValue(value.rawValue)
++    } else if let value = value as? PlatformErrorCode {
++      super.writeByte(130)
++      super.writeValue(value.rawValue)
++    } else if let value = value as? PlatformFieldErrorCode {
++      super.writeByte(131)
++      super.writeValue(value.rawValue)
++    } else if let value = value as? PlatformFieldName {
++      super.writeByte(132)
++      super.writeValue(value.rawValue)
++    } else if let value = value as? InstalledAppInfo {
++      super.writeByte(133)
++      super.writeValue(value.toList())
++    } else if let value = value as? PlatformErrorResponse {
++      super.writeByte(134)
++      super.writeValue(value.toList())
++    } else if let value = value as? PlatformFieldError {
++      super.writeByte(135)
++      super.writeValue(value.toList())
++    } else {
++      super.writeValue(value)
++    }
++  }
++}
++
++private class PlatformApiPigeonCodecReaderWriter: FlutterStandardReaderWriter {
++  override func reader(with data: Data) -> FlutterStandardReader {
++    return PlatformApiPigeonCodecReader(data: data)
++  }
++
++  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
++    return PlatformApiPigeonCodecWriter(data: data)
++  }
++}
++
++class PlatformApiPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
++  static let shared = PlatformApiPigeonCodec(readerWriter: PlatformApiPigeonCodecReaderWriter())
++}
++
++/// {@template i_vpn_manager}
++/// Host-side VPN manager API.
++///
++/// `IVpnManager` is implemented on the platform (host) side and called from Dart.
++/// It provides the minimal lifecycle operations required by the plugin:
++/// - [start] to start the VPN engine using a prepared configuration string.
++/// - [stop] to stop the VPN engine.
++/// - [getCurrentState] to query the current engine state.
++///
++/// ## Ordering and concurrency
++/// [start] and [stop] are executed on a serial background queue (see [TaskQueue]).
++/// This ensures:
++/// - operations are performed in the order they are invoked,
++/// - platform UI threads are not blocked by long-running operations.
++///
++/// ## Configuration format
++/// The [config] parameter is a backend configuration document (string).
++/// Its exact format is defined by the backend and produced on the Dart side
++/// (for example by a [ConfigurationEncoder]).
++/// {@endtemplate}
++///
++/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
++protocol IVpnManager {
++  /// {@template i_vpn_manager_start}
++  /// Starts the VPN engine using the provided configuration document.
++  ///
++  /// [config] must contain a complete backend configuration text. The platform
++  /// implementation is responsible for:
++  /// - parsing/validating the configuration,
++  /// - initiating any required permissions or service start,
++  /// - transitioning the engine state accordingly.
++  ///
++  /// This call is executed on a serial background task queue to avoid blocking
++  /// the platform UI thread.
++  /// {@endtemplate}
++  func start(serverName: String, config: String) throws
++  /// {@template i_vpn_manager_stop}
++  /// Stops the VPN engine.
++  ///
++  /// The platform implementation should stop the underlying VPN service/process
++  /// and transition the engine state to [VpnManagerState.disconnected].
++  ///
++  /// This call is executed on a serial background task queue to avoid blocking
++  /// the platform UI thread.
++  /// {@endtemplate}
++  func stop() throws
++  /// Returns launchable installed applications on Android.
++  func getInstalledApps(includeSystemApps: Bool) throws -> [InstalledAppInfo]
++  /// Persists package names that should bypass the VPN tunnel on Android.
++  func setBypassedPackages(packageNames: [String]) throws
++  /// Returns package names that should bypass the VPN tunnel on Android.
++  func getBypassedPackages() throws -> [String]
++  /// {@template i_vpn_manager_update_configuration}
++  /// Updates the iOS system VPN profile or deletes it.
++  ///
++  /// The platform implementation should update the iOS system VPN profile
++  /// if the [serverName] and [config] are specified or delete the profile
++  /// entirely if one of them is `null`.
++  ///
++  /// This method should always be called on stopped VPN engine.
++  ///
++  /// This call is executed on a serial background task queue to avoid blocking
++  /// the platform UI thread.
++  /// {@endtemplate}
++  func updateConfiguration(serverName: String?, config: String?) throws
++  /// {@template i_vpn_manager_get_current_state}
++  /// Returns the current VPN engine state.
++  ///
++  /// This method is typically used to:
++  /// - restore UI state after app restart,
++  /// - confirm whether a start/stop request has taken effect,
++  /// - diagnose platform-side lifecycle issues.
++  /// {@endtemplate}
++  func getCurrentState() throws -> VpnManagerState
++}
++
++/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
++class IVpnManagerSetup {
++  static var codec: FlutterStandardMessageCodec { PlatformApiPigeonCodec.shared }
++  /// Sets up an instance of `IVpnManager` to handle messages through the `binaryMessenger`.
++  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: IVpnManager?, messageChannelSuffix: String = "") {
++    let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
++    #if os(iOS)
++      let taskQueue = binaryMessenger.makeBackgroundTaskQueue?()
++    #else
++      let taskQueue: FlutterTaskQueue? = nil
++    #endif
++    /// {@template i_vpn_manager_start}
++    /// Starts the VPN engine using the provided configuration document.
++    ///
++    /// [config] must contain a complete backend configuration text. The platform
++    /// implementation is responsible for:
++    /// - parsing/validating the configuration,
++    /// - initiating any required permissions or service start,
++    /// - transitioning the engine state accordingly.
++    ///
++    /// This call is executed on a serial background task queue to avoid blocking
++    /// the platform UI thread.
++    /// {@endtemplate}
++    let startChannel = taskQueue == nil
++      ? FlutterBasicMessageChannel(name: "dev.flutter.pigeon.vpn_plugin.IVpnManager.start\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
++      : FlutterBasicMessageChannel(name: "dev.flutter.pigeon.vpn_plugin.IVpnManager.start\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
++    if let api = api {
++      startChannel.setMessageHandler { message, reply in
++        let args = message as! [Any?]
++        let serverNameArg = args[0] as! String
++        let configArg = args[1] as! String
++        do {
++          try api.start(serverName: serverNameArg, config: configArg)
++          reply(wrapResult(nil))
++        } catch {
++          reply(wrapError(error))
++        }
++      }
++    } else {
++      startChannel.setMessageHandler(nil)
++    }
++    /// {@template i_vpn_manager_stop}
++    /// Stops the VPN engine.
++    ///
++    /// The platform implementation should stop the underlying VPN service/process
++    /// and transition the engine state to [VpnManagerState.disconnected].
++    ///
++    /// This call is executed on a serial background task queue to avoid blocking
++    /// the platform UI thread.
++    /// {@endtemplate}
++    let stopChannel = taskQueue == nil
++      ? FlutterBasicMessageChannel(name: "dev.flutter.pigeon.vpn_plugin.IVpnManager.stop\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
++      : FlutterBasicMessageChannel(name: "dev.flutter.pigeon.vpn_plugin.IVpnManager.stop\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
++    if let api = api {
++      stopChannel.setMessageHandler { _, reply in
++        do {
++          try api.stop()
++          reply(wrapResult(nil))
++        } catch {
++          reply(wrapError(error))
++        }
++      }
++    } else {
++      stopChannel.setMessageHandler(nil)
++    }
++    /// Returns launchable installed applications on Android.
++    let getInstalledAppsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.vpn_plugin.IVpnManager.getInstalledApps\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
++    if let api = api {
++      getInstalledAppsChannel.setMessageHandler { message, reply in
++        let args = message as! [Any?]
++        let includeSystemAppsArg = args[0] as! Bool
++        do {
++          let result = try api.getInstalledApps(includeSystemApps: includeSystemAppsArg)
++          reply(wrapResult(result))
++        } catch {
++          reply(wrapError(error))
++        }
++      }
++    } else {
++      getInstalledAppsChannel.setMessageHandler(nil)
++    }
++    /// Persists package names that should bypass the VPN tunnel on Android.
++    let setBypassedPackagesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.vpn_plugin.IVpnManager.setBypassedPackages\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
++    if let api = api {
++      setBypassedPackagesChannel.setMessageHandler { message, reply in
++        let args = message as! [Any?]
++        let packageNamesArg = args[0] as! [String]
++        do {
++          try api.setBypassedPackages(packageNames: packageNamesArg)
++          reply(wrapResult(nil))
++        } catch {
++          reply(wrapError(error))
++        }
++      }
++    } else {
++      setBypassedPackagesChannel.setMessageHandler(nil)
++    }
++    /// Returns package names that should bypass the VPN tunnel on Android.
++    let getBypassedPackagesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.vpn_plugin.IVpnManager.getBypassedPackages\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
++    if let api = api {
++      getBypassedPackagesChannel.setMessageHandler { _, reply in
++        do {
++          let result = try api.getBypassedPackages()
++          reply(wrapResult(result))
++        } catch {
++          reply(wrapError(error))
++        }
++      }
++    } else {
++      getBypassedPackagesChannel.setMessageHandler(nil)
++    }
++    /// {@template i_vpn_manager_update_configuration}
++    /// Updates the iOS system VPN profile or deletes it.
++    ///
++    /// The platform implementation should update the iOS system VPN profile
++    /// if the [serverName] and [config] are specified or delete the profile
++    /// entirely if one of them is `null`.
++    ///
++    /// This method should always be called on stopped VPN engine.
++    ///
++    /// This call is executed on a serial background task queue to avoid blocking
++    /// the platform UI thread.
++    /// {@endtemplate}
++    let updateConfigurationChannel = taskQueue == nil
++      ? FlutterBasicMessageChannel(name: "dev.flutter.pigeon.vpn_plugin.IVpnManager.updateConfiguration\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
++      : FlutterBasicMessageChannel(name: "dev.flutter.pigeon.vpn_plugin.IVpnManager.updateConfiguration\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
++    if let api = api {
++      updateConfigurationChannel.setMessageHandler { message, reply in
++        let args = message as! [Any?]
++        let serverNameArg: String? = nilOrValue(args[0])
++        let configArg: String? = nilOrValue(args[1])
++        do {
++          try api.updateConfiguration(serverName: serverNameArg, config: configArg)
++          reply(wrapResult(nil))
++        } catch {
++          reply(wrapError(error))
++        }
++      }
++    } else {
++      updateConfigurationChannel.setMessageHandler(nil)
++    }
++    /// {@template i_vpn_manager_get_current_state}
++    /// Returns the current VPN engine state.
++    ///
++    /// This method is typically used to:
++    /// - restore UI state after app restart,
++    /// - confirm whether a start/stop request has taken effect,
++    /// - diagnose platform-side lifecycle issues.
++    /// {@endtemplate}
++    let getCurrentStateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.vpn_plugin.IVpnManager.getCurrentState\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
++    if let api = api {
++      getCurrentStateChannel.setMessageHandler { _, reply in
++        do {
++          let result = try api.getCurrentState()
++          reply(wrapResult(result))
++        } catch {
++          reply(wrapError(error))
++        }
++      }
++    } else {
++      getCurrentStateChannel.setMessageHandler(nil)
++    }
++  }
++}
++/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
++protocol IDeepLink {
++  func decode(uri: String) throws -> String
++}
++
++/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
++class IDeepLinkSetup {
++  static var codec: FlutterStandardMessageCodec { PlatformApiPigeonCodec.shared }
++  /// Sets up an instance of `IDeepLink` to handle messages through the `binaryMessenger`.
++  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: IDeepLink?, messageChannelSuffix: String = "") {
++    let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
++    let decodeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.vpn_plugin.IDeepLink.decode\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
++    if let api = api {
++      decodeChannel.setMessageHandler { message, reply in
++        let args = message as! [Any?]
++        let uriArg = args[0] as! String
++        do {
++          let result = try api.decode(uri: uriArg)
++          reply(wrapResult(result))
++        } catch {
++          reply(wrapError(error))
++        }
++      }
++    } else {
++      decodeChannel.setMessageHandler(nil)
++    }
++  }
++}
+diff --git a/plugins/vpn_plugin/ios/Classes/VpnPlugin.swift b/plugins/vpn_plugin/ios/Classes/VpnPlugin.swift
+index 6ef992b..bc830fd 100644
+--- a/plugins/vpn_plugin/ios/Classes/VpnPlugin.swift
++++ b/plugins/vpn_plugin/ios/Classes/VpnPlugin.swift
+@@ -12,8 +12,10 @@ public class VpnPlugin: NSObject, FlutterPlugin {
+         // TODO: Made separated plugin initialization
+         // Konstantin Gorynin <k.gorynin@adguard.com>, 25 August 2025
+         // Setup all platform managers
+-        let vpnImpl = IVpnManagerImpl(bundleIdentifier: "com.adguard.TrustTunnel.Extension",
+-                                              appGroup: "group.com.adguard.TrustTunnel")
++        let vpnImpl = IVpnManagerImpl(
++            bundleIdentifier: Self.packetTunnelBundleIdentifier(),
++            appGroup: Self.appGroupIdentifier()
++        )
+         IVpnManagerSetup.setUp(binaryMessenger: messenger, api: vpnImpl)
+ 
+         let deepLinkImpl = IDeepLinkImpl()
+@@ -29,6 +31,28 @@ public class VpnPlugin: NSObject, FlutterPlugin {
+ 
+         self.vpnApi = vpnImpl
+     }
++
++    private static func packetTunnelBundleIdentifier() -> String {
++        if let value = Bundle.main.object(forInfoDictionaryKey: "SpicPacketTunnelBundleIdentifier") as? String,
++           !value.isEmpty {
++            return value
++        }
++
++        if let bundleIdentifier = Bundle.main.bundleIdentifier, !bundleIdentifier.isEmpty {
++            return "\(bundleIdentifier).PacketTunnel"
++        }
++
++        return "com.adguard.TrustTunnel.Extension"
++    }
++
++    private static func appGroupIdentifier() -> String {
++        if let value = Bundle.main.object(forInfoDictionaryKey: "SpicAppGroupIdentifier") as? String,
++           !value.isEmpty {
++            return value
++        }
++
++        return "group.com.adguard.TrustTunnel"
++    }
+ }
+ 
+ final class IVpnManagerImpl: NSObject, IVpnManager, FlutterStreamHandler {
+@@ -70,6 +94,17 @@ final class IVpnManagerImpl: NSObject, IVpnManager, FlutterStreamHandler {
+         vpnManager?.stop()
+     }
+ 
++    func getInstalledApps(includeSystemApps: Bool) throws -> [InstalledAppInfo] {
++        return []
++    }
++
++    func setBypassedPackages(packageNames: [String]) throws {
++    }
++
++    func getBypassedPackages() throws -> [String] {
++        return []
++    }
++
+     func getCurrentState() throws -> VpnManagerState {
+         return state
+     }
+diff --git a/plugins/vpn_plugin/lib/models/installed_app.dart b/plugins/vpn_plugin/lib/models/installed_app.dart
+new file mode 100644
+index 0000000..a5ddfdd
+--- /dev/null
++++ b/plugins/vpn_plugin/lib/models/installed_app.dart
+@@ -0,0 +1,15 @@
++import 'dart:typed_data';
++
++class InstalledApp {
++  const InstalledApp({
++    required this.packageName,
++    required this.appName,
++    required this.systemApp,
++    this.iconBytes,
++  });
++
++  final String packageName;
++  final String appName;
++  final bool systemApp;
++  final Uint8List? iconBytes;
++}
+diff --git a/plugins/vpn_plugin/lib/vpn_plugin.dart b/plugins/vpn_plugin/lib/vpn_plugin.dart
+index a5ae475..fef4587 100644
+--- a/plugins/vpn_plugin/lib/vpn_plugin.dart
++++ b/plugins/vpn_plugin/lib/vpn_plugin.dart
+@@ -3,9 +3,12 @@ import 'package:flutter/services.dart';
+ import 'package:vpn_plugin/domain/configuration_codec.dart';
+ import 'package:vpn_plugin/domain/query_log_encoder.dart';
+ import 'package:vpn_plugin/models/configuration.dart';
++import 'package:vpn_plugin/models/installed_app.dart';
+ import 'package:vpn_plugin/models/query_log_row.dart';
+ import 'package:vpn_plugin/platform_api.g.dart';
+ 
++export 'models/installed_app.dart';
++
+ /// {@template vpn_plugin}
+ /// A plugin that provides VPN functionality across multiple platforms.
+ ///
+@@ -33,6 +36,12 @@ abstract class VpnPlugin {
+   /// {@endtemplate}
+   Future<void> stop();
+ 
++  Future<List<InstalledApp>> getInstalledApps({bool includeSystemApps = false});
++
++  Future<void> setBypassedPackages(List<String> packageNames);
++
++  Future<List<String>> getBypassedPackages();
++
+   /// {@template vpn_plugin_get_current_state}
+   /// Retrieves the current state of the VPN connection.
+   ///
+@@ -100,6 +109,37 @@ class VpnPluginImpl implements VpnPlugin {
+   @override
+   Future<VpnManagerState> getCurrentState() => _api.getCurrentState();
+ 
++  @override
++  Future<List<InstalledApp>> getInstalledApps({bool includeSystemApps = false}) async {
++    final apps = await _api.getInstalledApps(includeSystemApps: includeSystemApps);
++    return apps
++        .map(
++          (app) => InstalledApp(
++            packageName: app.packageName,
++            appName: app.appName,
++            systemApp: app.systemApp,
++            iconBytes: app.iconBytes,
++          ),
++        )
++        .toList(growable: false);
++  }
++
++  @override
++  Future<void> setBypassedPackages(List<String> packageNames) {
++    return _api.setBypassedPackages(packageNames: packageNames);
++  }
++
++  @override
++  Future<List<String>> getBypassedPackages() async {
++    final packageNames = await _api.getBypassedPackages();
++    return packageNames
++        .map((packageName) => packageName.trim())
++        .where((packageName) => packageName.isNotEmpty)
++        .toSet()
++        .toList()
++      ..sort();
++  }
++
+   final _logEncoder = QueryLogEncoder();
+ 
+   /// {@macro vpn_plugin_start}
+diff --git a/plugins/vpn_plugin/pigeons/platform_api.dart b/plugins/vpn_plugin/pigeons/platform_api.dart
+index 6d4925e..661bb69 100644
+--- a/plugins/vpn_plugin/pigeons/platform_api.dart
++++ b/plugins/vpn_plugin/pigeons/platform_api.dart
+@@ -86,6 +86,15 @@ abstract class IVpnManager {
+   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+   void stop();
+ 
++  /// Returns launchable installed applications on Android.
++  List<InstalledAppInfo> getInstalledApps({required bool includeSystemApps});
++
++  /// Persists package names that should bypass the VPN tunnel on Android.
++  void setBypassedPackages({required List<String> packageNames});
++
++  /// Returns package names that should bypass the VPN tunnel on Android.
++  List<String> getBypassedPackages();
++
+   /// {@template i_vpn_manager_update_configuration}
+   /// Updates the iOS system VPN profile or deletes it.
+   ///
+@@ -112,6 +121,20 @@ abstract class IVpnManager {
+   VpnManagerState getCurrentState();
+ }
+ 
++class InstalledAppInfo {
++  const InstalledAppInfo({
++    required this.packageName,
++    required this.appName,
++    required this.systemApp,
++    this.iconBytes,
++  });
++
++  final String packageName;
++  final String appName;
++  final bool systemApp;
++  final Uint8List? iconBytes;
++}
++
+ /// {@template vpn_manager_state}
+ /// Current state of the platform VPN engine.
+ ///
+diff --git a/pubspec.lock b/pubspec.lock
+index 4dadaf5..328dc21 100644
+--- a/pubspec.lock
++++ b/pubspec.lock
+@@ -141,10 +141,10 @@ packages:
+     dependency: transitive
+     description:
+       name: characters
+-      sha256: f71061c654a3380576a52b451dd5532377954cf9dbd272a78fc8479606670803
++      sha256: faf38497bda5ead2a8c7615f4f7939df04333478bf32e4173fcb06d428b5716b
+       url: "https://pub.dev"
+     source: hosted
+-    version: "1.4.0"
++    version: "1.4.1"
+   charcode:
+     dependency: transitive
+     description:
+@@ -481,18 +481,18 @@ packages:
+     dependency: transitive
+     description:
+       name: matcher
+-      sha256: dc58c723c3c24bf8d3e2d3ad3f2f9d7bd9cf43ec6feaa64181775e60190153f2
++      sha256: dc0b7dc7651697ea4ff3e69ef44b0407ea32c487a39fff6a4004fa585e901861
+       url: "https://pub.dev"
+     source: hosted
+-    version: "0.12.17"
++    version: "0.12.19"
+   material_color_utilities:
+     dependency: transitive
+     description:
+       name: material_color_utilities
+-      sha256: f7142bb1154231d7ea5f96bc7bde4bda2a0945d2806bb11670e30b850d56bdec
++      sha256: "9c337007e82b1889149c82ed242ed1cb24a66044e30979c44912381e9be4c48b"
+       url: "https://pub.dev"
+     source: hosted
+-    version: "0.11.1"
++    version: "0.13.0"
+   meta:
+     dependency: transitive
+     description:
+@@ -774,10 +774,10 @@ packages:
+     dependency: transitive
+     description:
+       name: test_api
+-      sha256: ab2726c1a94d3176a45960b6234466ec367179b87dd74f1611adb1f3b5fb9d55
++      sha256: "8161c84903fd860b26bfdefb7963b3f0b68fee7adea0f59ef805ecca346f0c7a"
+       url: "https://pub.dev"
+     source: hosted
+-    version: "0.7.7"
++    version: "0.7.10"
+   typed_data:
+     dependency: transitive
+     description:
+@@ -946,5 +946,5 @@ packages:
+     source: hosted
+     version: "3.1.3"
+ sdks:
+-  dart: "3.10.1"
+-  flutter: "3.38.3"
++  dart: ">=3.10.0 <4.0.0"
++  flutter: ">=3.38.0"
+diff --git a/pubspec.yaml b/pubspec.yaml
+index 794a751..dc7e52a 100644
+--- a/pubspec.yaml
++++ b/pubspec.yaml
+@@ -24,8 +24,8 @@ version_titles:
+ build_channel: Release
+ 
+ environment:
+-  flutter: 3.38.3
+-  sdk: 3.10.1
++  flutter: ">=3.10.0"
++  sdk: ">=3.10.0"
+ 
+ dependencies:
+   drift: 2.30.0

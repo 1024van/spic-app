@@ -1,0 +1,130 @@
+name: macOS Smoke Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    paths:
+      - ".github/workflows/ios-smoke.yml"
+      - "ios/**"
+      - "lib/**"
+      - "pubspec.yaml"
+      - "pubspec.lock"
+      - "tool/ci/**"
+
+jobs:
+  smoke:
+    name: flutter pub get, pod install, xcodebuild
+    runs-on: macos-latest
+    timeout-minutes: 45
+
+    env:
+      TRUSTTUNNEL_REF: 2808c0efc20698d8ac3778fb1a98c005fa5b2c70
+      TRUSTTUNNEL_PATCH: tool/ci/trusttunnel_spic_2808c0ef.patch
+      GPR_KEY: ${{ secrets.GPR_KEY }}
+
+    steps:
+      - name: Checkout SPIC
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.0"
+          channel: stable
+          cache: true
+
+      - name: Check secret exists
+        shell: bash
+        run: |
+          if [ -z "${GPR_KEY:-}" ]; then
+            echo "GPR_KEY is empty"
+            exit 1
+          fi
+          if [[ "$GPR_KEY" == *$'\n'* || "$GPR_KEY" == *$'\r'* ]]; then
+            echo "GPR_KEY must contain only the token, without notes or extra lines"
+            exit 1
+          fi
+          if [[ ! "$GPR_KEY" =~ ^(ghp_|gho_|ghu_|github_pat_)[A-Za-z0-9_]+$ ]]; then
+            echo "GPR_KEY does not look like a GitHub token"
+            exit 1
+          fi
+
+      - name: Configure GitHub Packages auth
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > ~/.netrc <<EOF
+          machine maven.pkg.github.com
+            login x-access-token
+            password ${GPR_KEY}
+          EOF
+          chmod 600 ~/.netrc
+          cat > ~/.npmrc <<EOF
+          //npm.pkg.github.com/:_authToken=${GPR_KEY}
+          EOF
+          chmod 600 ~/.npmrc
+
+      - name: Toolchain versions
+        shell: bash
+        run: |
+          flutter --version
+          dart --version
+          xcodebuild -version
+          pod --version
+
+      - name: Checkout TrustTunnel dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf ../../TrustTunnelFlutterClient
+          git clone https://github.com/TrustTunnel/TrustTunnelFlutterClient.git ../../TrustTunnelFlutterClient
+          git -C ../../TrustTunnelFlutterClient checkout "$TRUSTTUNNEL_REF"
+          git -C ../../TrustTunnelFlutterClient apply --whitespace=nowarn "$GITHUB_WORKSPACE/$TRUSTTUNNEL_PATCH"
+
+      - name: Generate TrustTunnel sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd ../../TrustTunnelFlutterClient
+          flutter pub get
+          dart run intl_utils:generate
+          dart run build_runner build --delete-conflicting-outputs
+          cd plugins/vpn_plugin
+          flutter pub get
+          dart run pigeon \
+            --input pigeons/platform_api.dart \
+            --swift_out ios/Classes/PlatformApi.g.swift \
+            --kotlin_out android/src/main/kotlin/com/adguard/trusttunnel/vpn_plugin/PlatformApi.g.kt \
+            --dart_out lib/platform_api.g.dart
+
+      - name: Flutter pub get
+        shell: bash
+        run: flutter pub get
+
+      - name: Flutter iOS config
+        shell: bash
+        run: flutter build ios --debug --simulator --no-codesign --config-only
+
+      - name: Pod install
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd ios
+          pod install --repo-update
+
+      - name: Xcode smoke build
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd ios
+          xcodebuild \
+            -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination "generic/platform=iOS Simulator" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build

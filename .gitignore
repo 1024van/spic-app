@@ -17,6 +17,7 @@ migrate_working_dir/
 *.ipr
 *.iws
 .idea/
+.cursor/
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
@@ -32,11 +33,14 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+releases/
 
 # Local secrets / конфиги
 lib/token_trusttunnel.txt
 .env
 *.env
+security/*private*
+security/*.b64
 
 # Symbolication related
 app.*.symbols
