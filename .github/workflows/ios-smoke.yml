@@ -1,7 +1,9 @@
-name: iOS smoke build
+name: macOS Smoke Build
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ main ]
   pull_request:
     paths:
       - ".github/workflows/ios-smoke.yml"
@@ -14,7 +16,7 @@ on:
 jobs:
   smoke:
     name: flutter pub get, pod install, xcodebuild
-    runs-on: macos-15
+    runs-on: macos-latest
     timeout-minutes: 45
 
     env:
@@ -29,11 +31,43 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.41.7"
+          flutter-version: "3.44.0"
           channel: stable
           cache: true
 
+      - name: Check secret exists
+        shell: bash
+        run: |
+          if [ -z "${GPR_KEY:-}" ]; then
+            echo "GPR_KEY is empty"
+            exit 1
+          fi
+
+      - name: Configure GitHub Packages auth
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > ~/.netrc <<EOF
+          machine maven.pkg.github.com
+            login x-access-token
+            password ${GPR_KEY}
+          EOF
+          chmod 600 ~/.netrc
+          cat > ~/.npmrc <<EOF
+          //npm.pkg.github.com/:_authToken=${GPR_KEY}
+          EOF
+          chmod 600 ~/.npmrc
+
+      - name: Toolchain versions
+        shell: bash
+        run: |
+          flutter --version
+          dart --version
+          xcodebuild -version
+          pod --version
+
       - name: Checkout TrustTunnel dependency
+        shell: bash
         run: |
           set -euo pipefail
           rm -rf ../../TrustTunnelFlutterClient
@@ -42,6 +76,7 @@ jobs:
           git -C ../../TrustTunnelFlutterClient apply --whitespace=nowarn "$GITHUB_WORKSPACE/$TRUSTTUNNEL_PATCH"
 
       - name: Generate TrustTunnel sources
+        shell: bash
         run: |
           set -euo pipefail
           cd ../../TrustTunnelFlutterClient
@@ -57,19 +92,18 @@ jobs:
             --dart_out lib/platform_api.g.dart
 
       - name: Flutter pub get
+        shell: bash
         run: flutter pub get
 
       - name: Pod install
+        shell: bash
         run: |
           set -euo pipefail
-          if [ -z "${GPR_KEY:-}" ]; then
-            echo "::error::GPR_KEY secret is required for TrustTunnelClient pod access"
-            exit 1
-          fi
           cd ios
           pod install --repo-update
 
       - name: Xcode smoke build
+        shell: bash
         run: |
           set -euo pipefail
           cd ios
