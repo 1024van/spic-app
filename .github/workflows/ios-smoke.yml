@@ -103,6 +103,10 @@ jobs:
         shell: bash
         run: flutter pub get
 
+      - name: Flutter iOS config
+        shell: bash
+        run: flutter build ios --debug --simulator --no-codesign --config-only
+
       - name: Pod install
         shell: bash
         run: |
