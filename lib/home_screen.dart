@@ -1069,7 +1069,7 @@ class _HomeScreenState extends State<HomeScreen> {
           segments: const [
             ButtonSegment(
               value: SpicRouteMode.fastest,
-              label: Text('Fastest'),
+              label: Text('Fast'),
               icon: Icon(Icons.bolt, size: 18),
             ),
             ButtonSegment(
@@ -1079,14 +1079,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ButtonSegment(
               value: SpicRouteMode.secure,
-              label: Text('Secure'),
+              label: Text('Safe'),
               icon: Icon(Icons.shield_outlined, size: 18),
             ),
-            ButtonSegment(
-              value: SpicRouteMode.manual,
-              label: Text('Manual'),
-              icon: Icon(Icons.tune, size: 18),
-            ),
+            ButtonSegment(value: SpicRouteMode.manual, label: Text('Manual')),
           ],
           selected: {_connectionSupervisor.routeMode},
           onSelectionChanged: _isActionInFlight
@@ -1222,7 +1218,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (externalRoute) ...[
               const SizedBox(height: 8),
               Text(
-                'External endpoint: SPIC cannot verify logging, DNS policy, or server-side protections.',
+                'External server: SPIC protection is not guaranteed.',
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.deepOrange.shade700,
@@ -1287,6 +1283,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 10),
+            Text(
+              'We protect your privacy. SPIC does not sell your data, tamper with websites, or expose your DNS queries to your provider.',
+              style: TextStyle(
+                fontSize: 12,
+                color: scheme.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
@@ -1323,13 +1328,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ? 'Smart on${smartCount == 0 ? '' : ', $smartCount suggested'}'
         : 'Smart off';
     final subtitle = count == 0
-        ? 'No apps bypass VPN - $suffix'
-        : '$count app${count == 1 ? '' : 's'} bypass VPN - $suffix';
+        ? 'No apps outside VPN - $suffix'
+        : '$count app${count == 1 ? '' : 's'} outside VPN - $suffix';
 
     return Card(
       child: ListTile(
         leading: const Icon(Icons.app_shortcut),
-        title: const Text('Apps bypassing VPN'),
+        title: const Text('Apps outside VPN'),
         subtitle: Text(subtitle),
         trailing: const Icon(Icons.chevron_right),
         onTap: () =>
@@ -3089,8 +3094,8 @@ class _BypassedAppsScreenState extends State<_BypassedAppsScreen> {
         appBar: AppBar(
           title: Text(
             selectedCount == 0
-                ? 'Apps bypassing VPN'
-                : 'Apps bypassing VPN ($selectedCount)',
+                ? 'Apps outside VPN'
+                : 'Apps outside VPN ($selectedCount)',
           ),
           actions: [
             TextButton(
