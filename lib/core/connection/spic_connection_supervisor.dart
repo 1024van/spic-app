@@ -9,7 +9,7 @@ import 'package:trusttunnel/data/model/vpn_state.dart';
 
 import '../trust/spic_trust_policy.dart';
 
-enum SpicRouteMode { fastest, stable, secure }
+enum SpicRouteMode { fastest, stable, secure, manual }
 
 class SpicRouteProbeResult {
   const SpicRouteProbeResult({
@@ -127,11 +127,8 @@ class SpicConnectionSupervisor extends ChangeNotifier {
   static const Duration _serverFailureCooldown = Duration(seconds: 90);
   static const Duration dnsCheckTimeout = Duration(seconds: 2);
 
+  static const List<String> spicTunnelDnsUpstreams = ['198.18.53.1:53'];
   static const List<String> _defaultDnsUpstreams = ['1.1.1.1', '8.8.8.8'];
-  static const List<String> _secureDnsUpstreams = [
-    'tls://1.1.1.1',
-    'https://cloudflare-dns.com/dns-query',
-  ];
 
   SpicRouteMode _routeMode = SpicRouteMode.fastest;
   Map<String, DateTime> _serverCooldownUntil = const {};
@@ -148,6 +145,7 @@ class SpicConnectionSupervisor extends ChangeNotifier {
   DateTime? _lastHealthCheckedAt;
   int _healthFailureStreak = 0;
   String _policySummary = 'Fastest: measured route, primary transport';
+  String? _lastHealthyRouteKey;
 
   SpicRouteMode get routeMode => _routeMode;
 
@@ -218,11 +216,6 @@ class SpicConnectionSupervisor extends ChangeNotifier {
   );
 
   VpnState displayVpnState(VpnState state) {
-    if (state == VpnState.connected &&
-        (_isVerifyingConnection || !_routeHealthy || !_dnsHealthy)) {
-      return VpnState.connecting;
-    }
-
     return state;
   }
 
@@ -347,6 +340,64 @@ class SpicConnectionSupervisor extends ChangeNotifier {
     }
   }
 
+  SpicRouteSelection? selectImmediateServer({
+    required List<Server> effectiveServers,
+    required Server? selected,
+    required VpnProtocol preferredProtocol,
+  }) {
+    final candidates = _eligibleSmartServers(effectiveServers, selected);
+    if (candidates.isEmpty) {
+      _routeStatusMessage = 'No available route. Try again shortly.';
+      notifyListeners();
+      return null;
+    }
+
+    final selectedCandidate = selected == null
+        ? null
+        : _matchingCandidate(candidates, selected);
+    Server? server;
+
+    switch (_routeMode) {
+      case SpicRouteMode.manual:
+        server = selectedCandidate;
+        break;
+
+      case SpicRouteMode.fastest:
+      case SpicRouteMode.stable:
+        server =
+            selectedCandidate ??
+            _candidateByKey(candidates, _lastHealthyRouteKey) ??
+            candidates.first;
+        break;
+
+      case SpicRouteMode.secure:
+        server =
+            selectedCandidate ??
+            _candidateByKey(candidates, _lastHealthyRouteKey) ??
+            _firstWhereOrNull(candidates, isPreferredSecureServer) ??
+            candidates.first;
+        break;
+    }
+
+    if (server == null) {
+      _routeStatusMessage = 'Select server first';
+      notifyListeners();
+      return null;
+    }
+
+    final protocol = _fastestProtocolFor(server, preferredProtocol);
+    _isSelectingSmartRoute = false;
+    _routeStatusMessage = 'Starting ${_routeMode.name} route...';
+    _protectionMessage = 'Starting VPN';
+    notifyListeners();
+
+    return SpicRouteSelection(
+      server: server,
+      protocol: protocol,
+      latency: Duration.zero,
+    );
+  }
+
   Future<SpicRouteSelection?> selectSmartServer({
     required List<Server> effectiveServers,
     required Server? selected,
@@ -364,6 +415,26 @@ class SpicConnectionSupervisor extends ChangeNotifier {
     notifyListeners();
 
     try {
+      if (_routeMode == SpicRouteMode.manual) {
+        if (selected == null ||
+            !hasServerCredentials(selected) ||
+            isServerCoolingDown(selected)) {
+          return null;
+        }
+
+        final result = await probeServer(
+          selected,
+          protocol: _fastestProtocolFor(selected, preferredProtocol),
+        );
+        return result == null
+            ? null
+            : SpicRouteSelection(
+                server: result.server,
+                protocol: result.protocol,
+                latency: result.latency,
+              );
+      }
+
       if (selected != null &&
           !isTrustedSpicServer(selected) &&
           candidates.any((server) => isSameServerEndpoint(server, selected))) {
@@ -437,6 +508,9 @@ class SpicConnectionSupervisor extends ChangeNotifier {
             }
           }
           return null;
+
+        case SpicRouteMode.manual:
+          return null;
       }
     } finally {
       _isSelectingSmartRoute = false;
@@ -444,41 +518,54 @@ class SpicConnectionSupervisor extends ChangeNotifier {
     }
   }
 
-  Server applyPolicy(Server server, {required VpnProtocol protocol}) {
+  Server applyPolicy(
+    Server server, {
+    required VpnProtocol protocol,
+    bool antiDpiEnabled = false,
+  }) {
     final trusted = isTrustedSpicServer(server);
+    final btw = isBtwServer(server);
+    final effectiveProtocol = btw ? VpnProtocol.http2 : protocol;
     final cleanDns = server.dnsServers
         .where((value) => value.trim().isNotEmpty)
         .toList(growable: false);
-    final baseDns = cleanDns.isEmpty ? _defaultDnsUpstreams : cleanDns;
-    final fallback = oppositeProtocol(protocol);
+    final baseDns = trusted
+        ? spicTunnelDnsUpstreams
+        : cleanDns.isEmpty
+        ? _defaultDnsUpstreams
+        : cleanDns;
+    final fallback = oppositeProtocol(effectiveProtocol);
 
     switch (_routeMode) {
       case SpicRouteMode.fastest:
         _policySummary = trusted
-            ? 'Fastest: measured route, ${protocolLabel(protocol)}, kill switch on'
+            ? 'Fastest: measured route, ${protocolLabel(effectiveProtocol)}, kill switch on'
             : 'External route: endpoint and logging policy unverified';
         notifyListeners();
         return server.copyWith(
-          vpnProtocol: protocol,
+          vpnProtocol: effectiveProtocol,
           clearUpstreamFallbackProtocol: true,
           dnsServers: baseDns,
+          ipv6: btw ? false : null,
           killSwitchEnabled: true,
-          antiDpi: false,
-          postQuantumGroupEnabled: true,
+          antiDpi: antiDpiEnabled,
+          postQuantumGroupEnabled: !btw,
         );
 
       case SpicRouteMode.stable:
         _policySummary = trusted
-            ? 'Stable: ${protocolLabel(protocol)} with ${protocolLabel(fallback)} fallback, kill switch on'
+            ? 'Stable: ${protocolLabel(effectiveProtocol)} with ${protocolLabel(fallback)} fallback, kill switch on'
             : 'External route: fallback depends on third-party endpoint';
         notifyListeners();
         return server.copyWith(
-          vpnProtocol: protocol,
-          upstreamFallbackProtocol: fallback,
+          vpnProtocol: effectiveProtocol,
+          upstreamFallbackProtocol: btw ? null : fallback,
+          clearUpstreamFallbackProtocol: btw,
           dnsServers: baseDns,
+          ipv6: btw ? false : null,
           killSwitchEnabled: true,
-          antiDpi: false,
-          postQuantumGroupEnabled: true,
+          antiDpi: antiDpiEnabled,
+          postQuantumGroupEnabled: !btw,
         );
 
       case SpicRouteMode.secure:
@@ -487,12 +574,29 @@ class SpicConnectionSupervisor extends ChangeNotifier {
             : 'External route: SPIC cannot verify endpoint security';
         notifyListeners();
         return server.copyWith(
-          vpnProtocol: protocol,
-          upstreamFallbackProtocol: fallback,
-          dnsServers: _secureDnsUpstreams,
+          vpnProtocol: effectiveProtocol,
+          upstreamFallbackProtocol: btw ? null : fallback,
+          clearUpstreamFallbackProtocol: btw,
+          dnsServers: baseDns,
+          ipv6: btw ? false : null,
           killSwitchEnabled: true,
-          antiDpi: true,
-          postQuantumGroupEnabled: true,
+          antiDpi: btw ? antiDpiEnabled : true,
+          postQuantumGroupEnabled: !btw,
+        );
+
+      case SpicRouteMode.manual:
+        _policySummary = antiDpiEnabled
+            ? 'Manual: selected route, anti-DPI, kill switch on'
+            : 'Manual: selected route, kill switch on';
+        notifyListeners();
+        return server.copyWith(
+          vpnProtocol: effectiveProtocol,
+          clearUpstreamFallbackProtocol: true,
+          dnsServers: baseDns,
+          ipv6: btw ? false : null,
+          killSwitchEnabled: true,
+          antiDpi: antiDpiEnabled,
+          postQuantumGroupEnabled: !btw,
         );
     }
   }
@@ -549,6 +653,7 @@ class SpicConnectionSupervisor extends ChangeNotifier {
     final routeOk = routeProbe != null;
     if (routeOk && dnsOk) {
       await clearServerFailure(server);
+      _lastHealthyRouteKey = serverEndpointKey(server);
     } else {
       await rememberServerFailure(server);
     }
@@ -601,6 +706,9 @@ class SpicConnectionSupervisor extends ChangeNotifier {
       _activeRouteTrusted = trusted;
       _lastRouteLatency = routeProbe?.latency;
       _lastHealthCheckedAt = DateTime.now();
+      if (routeOk && dnsOk) {
+        _lastHealthyRouteKey = serverEndpointKey(selected);
+      }
       _healthFailureStreak = failureStreak;
       _protectionMessage = !trusted
           ? 'External endpoint not verified'
@@ -677,18 +785,21 @@ class SpicConnectionSupervisor extends ChangeNotifier {
     SpicRouteMode.fastest => 'Fastest route selected',
     SpicRouteMode.stable => 'Stable route selected',
     SpicRouteMode.secure => 'Secure route selected',
+    SpicRouteMode.manual => 'Manual route selected',
   };
 
   static String routeSelectedMessage(SpicRouteMode mode) => switch (mode) {
     SpicRouteMode.fastest => 'Fastest route selected',
     SpicRouteMode.stable => 'Stable route selected',
     SpicRouteMode.secure => 'Secure route selected',
+    SpicRouteMode.manual => 'Manual route selected',
   };
 
   static String routeTestingMessage(SpicRouteMode mode) => switch (mode) {
     SpicRouteMode.fastest => 'Checking fastest route...',
     SpicRouteMode.stable => 'Checking stable route...',
     SpicRouteMode.secure => 'Checking secure route...',
+    SpicRouteMode.manual => 'Checking selected route...',
   };
 
   static VpnProtocol oppositeProtocol(VpnProtocol protocol) =>
@@ -706,33 +817,56 @@ class SpicConnectionSupervisor extends ChangeNotifier {
       server.username.trim().isNotEmpty && server.password.trim().isNotEmpty;
 
   static bool isSameServerEndpoint(Server left, Server right) {
-    final leftDomain = left.domain.trim().toLowerCase();
-    final rightDomain = right.domain.trim().toLowerCase();
-    if (leftDomain.isNotEmpty && leftDomain == rightDomain) {
-      return true;
+    final leftAddress = normalizedEndpointAddress(left.ipAddress);
+    final rightAddress = normalizedEndpointAddress(right.ipAddress);
+    if (leftAddress.isNotEmpty || rightAddress.isNotEmpty) {
+      return leftAddress.isNotEmpty &&
+          rightAddress.isNotEmpty &&
+          leftAddress == rightAddress;
     }
 
-    final leftAddress = normalizedEndpointHost(left.ipAddress);
-    final rightAddress = normalizedEndpointHost(right.ipAddress);
-    return leftAddress.isNotEmpty && leftAddress == rightAddress;
+    final leftDomain = left.domain.trim().toLowerCase();
+    final rightDomain = right.domain.trim().toLowerCase();
+    return leftDomain.isNotEmpty && leftDomain == rightDomain;
   }
 
   static String normalizedEndpointHost(String value) {
     return SpicTrustPolicy.normalizedEndpointHost(value);
   }
 
-  static String serverEndpointKey(Server server) {
-    final domain = server.domain.trim().toLowerCase();
-    if (domain.isNotEmpty) {
-      return 'domain:$domain';
+  static String normalizedEndpointAddress(String value) {
+    final endpoint = _parseEndpointAddress(value);
+    if (endpoint == null) {
+      return '';
     }
 
-    final host = normalizedEndpointHost(server.ipAddress);
-    return host.isNotEmpty ? 'host:$host' : 'id:${server.id}';
+    final host = endpoint.host.contains(':')
+        ? '[${endpoint.host}]'
+        : endpoint.host;
+    return '$host:${endpoint.port}';
+  }
+
+  static String serverEndpointKey(Server server) {
+    final address = normalizedEndpointAddress(server.ipAddress);
+    if (address.isNotEmpty) {
+      return 'address:$address';
+    }
+
+    final domain = normalizedEndpointHost(server.domain);
+    return domain.isNotEmpty ? 'tls:$domain' : 'id:${server.id}';
   }
 
   static bool isTrustedSpicServer(Server server) {
     return SpicTrustPolicy.isTrustedServer(server);
+  }
+
+  static bool isBtwServer(Server server) {
+    final address = normalizedEndpointAddress(server.ipAddress);
+    final hostname = server.domain.trim().toLowerCase();
+    return address == '185.236.24.249:8443' ||
+        address == '185.236.24.249:18445' ||
+        hostname == 'home.stop2virus.xyz' &&
+            (address.endsWith(':8443') || address.endsWith(':18445'));
   }
 
   static bool isPreferredSecureServer(Server server) {
@@ -749,6 +883,7 @@ class SpicConnectionSupervisor extends ChangeNotifier {
     SpicRouteMode.fastest => 'Fastest: measured route, primary transport',
     SpicRouteMode.stable => 'Stable: fallback transport enabled',
     SpicRouteMode.secure => 'Secure: encrypted DNS, anti-DPI, kill switch',
+    SpicRouteMode.manual => 'Manual: selected route',
   };
 
   VpnProtocol _fastestProtocolFor(
@@ -795,10 +930,45 @@ class SpicConnectionSupervisor extends ChangeNotifier {
         : candidates;
   }
 
+  Server? _matchingCandidate(List<Server> candidates, Server selected) {
+    return _firstWhereOrNull(
+      candidates,
+      (server) => isSameServerEndpoint(server, selected),
+    );
+  }
+
+  Server? _candidateByKey(List<Server> candidates, String? key) {
+    if (key == null) {
+      return null;
+    }
+
+    return _firstWhereOrNull(
+      candidates,
+      (server) => serverEndpointKey(server) == key,
+    );
+  }
+
+  Server? _firstWhereOrNull(
+    Iterable<Server> servers,
+    bool Function(Server server) test,
+  ) {
+    for (final server in servers) {
+      if (test(server)) {
+        return server;
+      }
+    }
+
+    return null;
+  }
+
   Future<Server?> _prepareFallbackServer({
     required Server current,
     required List<Server> effectiveServers,
   }) async {
+    if (_routeMode == SpicRouteMode.manual) {
+      return null;
+    }
+
     final candidates = _eligibleSmartServers(effectiveServers, current)
         .where((server) => !isSameServerEndpoint(server, current))
         .toList(growable: false);
@@ -834,23 +1004,34 @@ class SpicConnectionSupervisor extends ChangeNotifier {
           if (result != null) return result.server;
         }
         return null;
+
+      case SpicRouteMode.manual:
+        return null;
     }
   }
 
   ({String host, int port})? _serverProbeEndpoint(Server server) {
-    final domain = server.domain.trim();
-    if (domain.isNotEmpty) {
-      return (host: domain, port: 443);
+    final addressEndpoint = _parseEndpointAddress(server.ipAddress);
+    if (addressEndpoint != null) {
+      return addressEndpoint;
     }
 
-    final rawAddress = server.ipAddress.trim();
-    if (rawAddress.isEmpty) {
-      return null;
-    }
+    return _parseEndpointAddress(server.domain);
+  }
+
+  static ({String host, int port})? _parseEndpointAddress(String value) {
+    final rawAddress = value.trim().toLowerCase();
+    if (rawAddress.isEmpty) return null;
 
     final uri = Uri.tryParse('tcp://$rawAddress');
     if (uri != null && uri.host.isNotEmpty) {
       return (host: uri.host, port: uri.hasPort ? uri.port : 443);
+    }
+
+    if (rawAddress.contains(':') &&
+        !rawAddress.startsWith('[') &&
+        rawAddress.indexOf(':') != rawAddress.lastIndexOf(':')) {
+      return (host: rawAddress, port: 443);
     }
 
     final host = rawAddress.split(':').first.trim();

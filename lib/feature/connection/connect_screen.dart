@@ -56,7 +56,7 @@ class _ConnectScreenState extends State<ConnectScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Import TT link')),
+      appBar: AppBar(title: const Text('Import access link')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -64,19 +64,22 @@ class _ConnectScreenState extends State<ConnectScreen> {
             TextField(
               controller: controller,
               decoration: const InputDecoration(
-                labelText: 'tt:// link',
+                labelText: 'Access link',
+                hintText: 'tt://?...',
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
-            ElevatedButton(onPressed: decodeLink, child: const Text('Decode')),
+            ElevatedButton(
+              onPressed: decodeLink,
+              child: const Text('Check link'),
+            ),
             const SizedBox(height: 20),
             if (error != null)
               Text(error!, style: const TextStyle(color: Colors.red)),
             if (config != null) ...[
               Text('Server: ${config!.server}'),
-              Text('User: ${config!.username}'),
-              Text('Password: ${config!.password}'),
+              const Text('Access credentials are stored securely.'),
               const SizedBox(height: 20),
               ElevatedButton(onPressed: connect, child: const Text('Connect')),
             ],

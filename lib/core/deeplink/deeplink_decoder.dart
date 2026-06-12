@@ -34,6 +34,7 @@ class TTDecoder {
     DateTime? expiresAt;
     String? subscriptionId;
     String? userId;
+    final dnsUpstreams = <String>[];
 
     while (i < bytes.length) {
       if (i + 1 >= bytes.length) {
@@ -70,6 +71,11 @@ class TTDecoder {
         case 0x09:
           userId = value;
           break;
+        case 0x0D:
+          if (value.trim().isNotEmpty) {
+            dnsUpstreams.add(value.trim());
+          }
+          break;
       }
 
       i += 2 + length;
@@ -83,6 +89,7 @@ class TTDecoder {
       expiresAt: expiresAt,
       subscriptionId: subscriptionId,
       userId: userId,
+      dnsUpstreams: List.unmodifiable(dnsUpstreams),
     );
   }
 }

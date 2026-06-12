@@ -54,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const String _smartBypassEnabledPrefsKey = 'spic.smart_bypass_enabled';
   static const String _smartBypassDisabledPackagesPrefsKey =
       'spic.smart_bypass_disabled_packages';
+  static const String _antiDpiEnabledPrefsKey = 'spic.anti_dpi_enabled';
   static const String _onboardingSeenPrefsKey = 'spic.onboarding_seen';
   static const MethodChannel _deeplinkChannel = MethodChannel('spic/deeplink');
   static const MethodChannel _nativeActionsChannel = MethodChannel(
@@ -79,14 +80,16 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _profileStateLoaded = false;
   bool _updateCheckStarted = false;
   bool _smartBypassEnabled = true;
+  bool _antiDpiEnabled = false;
   bool _isHandlingExternalDeepLink = false;
   bool _showOnboarding = true;
   String? _referralLink;
-  TTConfig? _accessProfileConfig;
+  List<TTConfig> _accessProfileConfigs = const [];
   String? _pendingExternalDeepLink;
   String? _lastHandledExternalDeepLink;
   String? _pendingNativeAction;
   bool _isHandlingNativeAction = false;
+  DateTime? _lastBackPressedAt;
 
   List<Server> _localServers = const [];
   List<Server> _healthServers = const [];
@@ -94,6 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Server? _healthSelectedServer;
   String? _selectedServerId;
   String? _selectedServerKey;
+  int _postConnectVerificationGeneration = 0;
 
   late SubscriptionInfo _subscription;
   late final AccessProfileStore _accessProfileStore;
@@ -352,6 +356,27 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _handleMainBackPress() {
+    final now = DateTime.now();
+    final shouldExit =
+        _lastBackPressedAt != null &&
+        now.difference(_lastBackPressedAt!) < const Duration(seconds: 2);
+    if (shouldExit) {
+      SystemNavigator.pop();
+      return;
+    }
+
+    _lastBackPressedAt = now;
+    ScaffoldMessenger.maybeOf(context)
+      ?..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('Чтобы выключить приложение нажмите "назад" ещё раз.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
     final VpnController vpn = VpnScope.vpnControllerOf(context);
@@ -372,78 +397,92 @@ class _HomeScreenState extends State<HomeScreen> {
       selected: selected,
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('SPIC'),
-        actions: [
-          IconButton(
-            tooltip: 'Connection diagnostics',
-            onPressed: () => _openDiagnosticsHub(vpnState, selected),
-            icon: const Icon(Icons.health_and_safety_outlined),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                  child: Column(
-                    children: [
-                      Text('Server: ${selected?.name ?? 'not selected'}'),
-                      const SizedBox(height: 4),
-                      Text('Status: ${_labelForState(displayVpnState)}'),
-                      const SizedBox(height: 10),
-                      _buildRouteModeSelector(),
-                      const SizedBox(height: 10),
-                      _buildProtectionCard(displayVpnState),
-                      const SizedBox(height: 10),
-                      if (_showOnboarding) _buildOnboardingCard(),
-                      if (_showOnboarding) const SizedBox(height: 10),
-                      SizedBox(
-                        height: _serverListPanelHeight(effectiveServers),
-                        child: _buildServersList(
-                          servers,
-                          effectiveServers,
-                          selected,
+    return PopScope<void>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          _handleMainBackPress();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('SPIC'),
+          actions: [
+            IconButton(
+              tooltip: 'Connection diagnostics',
+              onPressed: () => _openDiagnosticsHub(vpnState, selected),
+              icon: const Icon(Icons.health_and_safety_outlined),
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Server: ${selected == null ? 'not selected' : _serverDisplayName(selected)}',
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Center(
-                        child: VpnConnectButton(
-                          state: displayVpnState,
-                          onPressed: _isActionInFlight
-                              ? null
-                              : () => _handleConnectionToggle(
-                                  context: context,
-                                  vpn: vpn,
-                                  hasServers: effectiveServers.isNotEmpty,
-                                  effectiveServers: effectiveServers,
-                                  selected: selected,
-                                ),
+                        const SizedBox(height: 4),
+                        Text('Status: ${_labelForState(displayVpnState)}'),
+                        const SizedBox(height: 10),
+                        _buildRouteModeSelector(),
+                        const SizedBox(height: 10),
+                        _buildAntiDpiTile(vpn, selected),
+                        const SizedBox(height: 10),
+                        _buildProtectionCard(displayVpnState),
+                        const SizedBox(height: 10),
+                        if (_showOnboarding) _buildOnboardingCard(),
+                        if (_showOnboarding) const SizedBox(height: 10),
+                        SizedBox(
+                          height: _serverListPanelHeight(effectiveServers),
+                          child: _buildServersList(
+                            servers,
+                            effectiveServers,
+                            selected,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      if (_subscription.isExpired)
-                        _buildExpiredSubscriptionPanel(),
-                      if (_subscription.isExpired) const SizedBox(height: 10),
-                      _buildBypassedAppsTile(vpn, selected),
-                      const SizedBox(height: 10),
-                      if (showImportBanner) _buildImportPanel(),
-                      if (showImportBanner) const SizedBox(height: 10),
-                      _buildInviteButton(selected),
-                      const SizedBox(height: 8),
-                      _buildExpiryText(),
-                    ],
+                        const SizedBox(height: 10),
+                        Center(
+                          child: VpnConnectButton(
+                            state: displayVpnState,
+                            onPressed: _isActionInFlight
+                                ? null
+                                : () => _handleConnectionToggle(
+                                    context: context,
+                                    vpn: vpn,
+                                    hasServers: effectiveServers.isNotEmpty,
+                                    effectiveServers: effectiveServers,
+                                    selected: selected,
+                                  ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        if (_subscriptionForServer(selected).isExpired)
+                          _buildExpiredSubscriptionPanel(),
+                        if (_subscriptionForServer(selected).isExpired)
+                          const SizedBox(height: 10),
+                        _buildBypassedAppsTile(vpn, selected),
+                        const SizedBox(height: 10),
+                        if (showImportBanner) _buildImportPanel(),
+                        if (showImportBanner) const SizedBox(height: 10),
+                        _buildInviteButton(selected),
+                        const SizedBox(height: 8),
+                        _buildExpiryText(selected),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
@@ -465,7 +504,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
         if (link == null) {
           ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-            const SnackBar(content: Text('Import tt:// link first')),
+            const SnackBar(content: Text('Import access link first')),
           );
           return;
         }
@@ -529,7 +568,16 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
 
-    return mergedServers;
+    return _dedupeServersForDisplay(mergedServers);
+  }
+
+  List<Server> _dedupeServersForDisplay(Iterable<Server> servers) {
+    final keyedServers = <String, Server>{};
+    for (final server in servers) {
+      keyedServers[_serverEndpointKey(server)] = server;
+    }
+
+    return keyedServers.values.toList(growable: false);
   }
 
   Server? _effectiveSelectedServer(
@@ -606,8 +654,77 @@ class _HomeScreenState extends State<HomeScreen> {
     return _connectionSupervisor.protectionScore(vpnState);
   }
 
+  TTConfig? _accessProfileConfigForServer(Server server) {
+    for (final config in _accessProfileConfigs.reversed) {
+      if (_isAccessProfileForServer(config, server)) {
+        return config;
+      }
+    }
+
+    return null;
+  }
+
+  bool _isAccessProfileForServer(TTConfig config, Server server) {
+    if (!config.isValid || config.isExpired) {
+      return false;
+    }
+
+    final profileAddress = SpicConnectionSupervisor.normalizedEndpointAddress(
+      config.address ?? '',
+    );
+    final serverAddress = SpicConnectionSupervisor.normalizedEndpointAddress(
+      server.ipAddress,
+    );
+    if (profileAddress.isNotEmpty || serverAddress.isNotEmpty) {
+      return profileAddress.isNotEmpty &&
+          serverAddress.isNotEmpty &&
+          profileAddress == serverAddress;
+    }
+
+    final profileHostname = SpicConnectionSupervisor.normalizedEndpointHost(
+      config.hostname ?? '',
+    );
+    final serverHostname = SpicConnectionSupervisor.normalizedEndpointHost(
+      server.domain,
+    );
+    return profileHostname.isNotEmpty && profileHostname == serverHostname;
+  }
+
+  bool _isSameAccessProfileEndpoint(TTConfig left, TTConfig right) {
+    final leftAddress = SpicConnectionSupervisor.normalizedEndpointAddress(
+      left.address ?? '',
+    );
+    final rightAddress = SpicConnectionSupervisor.normalizedEndpointAddress(
+      right.address ?? '',
+    );
+    if (leftAddress.isNotEmpty || rightAddress.isNotEmpty) {
+      return leftAddress.isNotEmpty &&
+          rightAddress.isNotEmpty &&
+          leftAddress == rightAddress;
+    }
+
+    final leftHostname = SpicConnectionSupervisor.normalizedEndpointHost(
+      left.hostname ?? '',
+    );
+    final rightHostname = SpicConnectionSupervisor.normalizedEndpointHost(
+      right.hostname ?? '',
+    );
+    return leftHostname.isNotEmpty && leftHostname == rightHostname;
+  }
+
+  SubscriptionInfo _subscriptionForServer(Server? server) {
+    if (server == null) {
+      return _subscription;
+    }
+
+    final config = _accessProfileConfigForServer(server);
+    return config == null
+        ? _subscription
+        : SubscriptionInfo(expiresAt: config.expiresAt);
+  }
+
   Server _serverWithAccessProfile(Server server) {
-    final config = _accessProfileConfig;
+    final config = _accessProfileConfigForServer(server);
     if (!_isTrustedSpicServer(server) ||
         !_hasAccessProfileCredentials(config)) {
       return server;
@@ -645,15 +762,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildExpiryText() {
+  Widget _buildExpiryText(Server? selected) {
+    final subscription = _subscriptionForServer(selected);
     final style = TextStyle(
       fontSize: 12,
-      color: _subscription.isExpired ? Colors.red : null,
-      fontWeight: _subscription.isExpired ? FontWeight.w600 : null,
+      color: subscription.isExpired ? Colors.red : null,
+      fontWeight: subscription.isExpired ? FontWeight.w600 : null,
     );
-    final text = _subscription.isKnown
-        ? '${_subscription.dateLabel} - ${_subscription.label}'
-        : _subscription.label;
+    final text = subscription.isKnown
+        ? '${subscription.dateLabel} - ${subscription.label}'
+        : subscription.label;
     return Text(text, style: style);
   }
 
@@ -667,6 +785,7 @@ class _HomeScreenState extends State<HomeScreen> {
       final hasImportedProfile = prefs.getBool(_hasAccessProfileKey) ?? false;
       final savedProfileLink = prefs.getString(_accessProfileLinkKey);
       final onboardingSeen = prefs.getBool(_onboardingSeenPrefsKey) ?? false;
+      final antiDpiEnabled = prefs.getBool(_antiDpiEnabledPrefsKey) ?? false;
       if (!mounted) return;
 
       setState(() {
@@ -674,6 +793,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _subscription = SubscriptionInfo(expiresAt: expiresAt);
         _referralLink = prefs.getString(_referralLinkKey);
         _showOnboarding = !onboardingSeen && !hasImportedProfile;
+        _antiDpiEnabled = antiDpiEnabled;
         _profileStateLoaded = true;
       });
 
@@ -687,7 +807,13 @@ class _HomeScreenState extends State<HomeScreen> {
           legacyPrimaryLinkKey: _accessProfileLinkKey,
           legacyProfileLinksKey: _importedProfileLinksKey,
         );
+        if (mounted) {
+          setState(() {
+            _accessProfileConfigs = savedProfiles;
+          });
+        }
         await _restoreImportedServersFromConfigs(savedProfiles);
+        await _deduplicatePersistedServers();
         if (mounted) {
           ServersScope.controllerOf(context, listen: false).fetchServers();
         }
@@ -740,7 +866,9 @@ class _HomeScreenState extends State<HomeScreen> {
               } catch (error) {
                 if (!mounted) return;
                 ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-                  SnackBar(content: Text('Update download error: $error')),
+                  const SnackBar(
+                    content: Text('Could not open update. Try again later.'),
+                  ),
                 );
               }
             },
@@ -762,12 +890,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return buffer.toString();
   }
 
-  Future<void> _persistAccessProfileState({required TTConfig config}) async {
+  Future<List<TTConfig>> _persistAccessProfileState({
+    required TTConfig config,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
     final trustedProfile = _isTrustedAccessProfileConfig(config);
     final referralLink = trustedProfile ? _referralLinkForConfig(config) : null;
     await prefs.setBool(_hasAccessProfileKey, true);
-    await _accessProfileStore.saveProfile(config);
+    final profiles = await _accessProfileStore.saveProfile(config);
     await prefs.remove(_accessProfileLinkKey);
     await prefs.remove(_importedProfileLinksKey);
     if (config.expiresAt == null) {
@@ -779,7 +909,7 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
     if (!trustedProfile) {
-      return;
+      return profiles;
     }
 
     if (referralLink == null) {
@@ -787,6 +917,8 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       await prefs.setString(_referralLinkKey, referralLink);
     }
+
+    return profiles;
   }
 
   Future<void> _markOnboardingSeen() async {
@@ -802,7 +934,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _restoreImportedServersFromConfigs(
     Iterable<TTConfig> savedProfiles,
   ) async {
-    for (final config in savedProfiles) {
+    final validProfiles = savedProfiles
+        .where((config) => config.isValid && !config.isExpired)
+        .toList(growable: false);
+
+    for (final config in validProfiles) {
       await _restoreImportedServerFromConfig(config);
     }
   }
@@ -814,12 +950,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       final request = _addServerRequestFromConfig(config);
-      final server = await _serverRepository.addNewServer(request: request);
+      final server = await _upsertImportedServer(request);
       await _serverRepository.setSelectedServerId(id: server.id);
       if (!mounted) return;
 
       final trustedProfile = _isTrustedAccessProfileConfig(config);
       setState(() {
+        _accessProfileConfigs = [
+          ..._accessProfileConfigs.where(
+            (item) => !_isSameAccessProfileEndpoint(item, config),
+          ),
+          config,
+        ];
         _localServers = [
           ..._localServers.where(
             (item) => !_isSameServerEndpoint(item, server),
@@ -830,7 +972,6 @@ class _HomeScreenState extends State<HomeScreen> {
         _selectedServerKey = _serverEndpointKey(server);
         _selectedProtocol = server.vpnProtocol;
         if (trustedProfile) {
-          _accessProfileConfig = config;
           _referralLink = _referralLinkForConfig(config);
         }
       });
@@ -891,7 +1032,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 8),
             const Text(
-              'Your SPIC access is no longer active. Renew the subscription or enter a new tt:// link.',
+              'Your SPIC access is no longer active. Renew the subscription or enter a new access link.',
             ),
             const SizedBox(height: 12),
             Wrap(
@@ -941,6 +1082,11 @@ class _HomeScreenState extends State<HomeScreen> {
               label: Text('Secure'),
               icon: Icon(Icons.shield_outlined, size: 18),
             ),
+            ButtonSegment(
+              value: SpicRouteMode.manual,
+              label: Text('Manual'),
+              icon: Icon(Icons.tune, size: 18),
+            ),
           ],
           selected: {_connectionSupervisor.routeMode},
           onSelectionChanged: _isActionInFlight
@@ -969,6 +1115,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
         ),
       ],
+    );
+  }
+
+  Widget _buildAntiDpiTile(VpnController vpn, Server? selectedServer) {
+    final vpnIsBusy = _busyStates.contains(vpn.state);
+    return Card(
+      child: SwitchListTile(
+        secondary: const Icon(Icons.visibility_off_outlined),
+        title: const Text('Anti-DPI'),
+        subtitle: Text(
+          _antiDpiEnabled
+              ? 'Reconnects with anti-DPI enabled'
+              : 'Standard tunnel fingerprint',
+        ),
+        value: _antiDpiEnabled,
+        onChanged: _isActionInFlight || vpnIsBusy
+            ? null
+            : (value) => _setAntiDpiEnabled(
+                enabled: value,
+                vpn: vpn,
+                selectedServer: selectedServer,
+              ),
+      ),
     );
   }
 
@@ -1194,7 +1363,7 @@ class _HomeScreenState extends State<HomeScreen> {
           serverName: selectedServer?.name ?? 'not selected',
           protocol: _selectedProtocol,
           appVersion: '${packageInfo.version}+${packageInfo.buildNumber}',
-          subscription: _subscription.label,
+          subscription: _subscriptionForServer(selectedServer).label,
           bypassedAppsCount: _bypassedAppPackages.length,
           smartBypassEnabled: _smartBypassEnabled,
           importedProfile: _hasImportedProfile,
@@ -1233,8 +1402,8 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: Text(
                   _localServers.isEmpty
-                      ? 'Open import form for tt:// link'
-                      : 'Import another tt:// link',
+                      ? 'Add access link'
+                      : 'Import another access link',
                   style: const TextStyle(
                     color: Colors.black87,
                     fontWeight: FontWeight.w600,
@@ -1256,7 +1425,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (trimmedLink.isEmpty) {
       ScaffoldMessenger.maybeOf(
         context,
-      )?.showSnackBar(const SnackBar(content: Text('Paste tt:// link first')));
+      )?.showSnackBar(const SnackBar(content: Text('Paste access link first')));
       return null;
     }
 
@@ -1271,7 +1440,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (!mounted) return null;
         ScaffoldMessenger.maybeOf(
           context,
-        )?.showSnackBar(const SnackBar(content: Text('Invalid tt:// link')));
+        )?.showSnackBar(const SnackBar(content: Text('Invalid access link')));
         return null;
       }
 
@@ -1283,7 +1452,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ScaffoldMessenger.maybeOf(context)?.showSnackBar(
           const SnackBar(
             content: Text(
-              'This tt:// link has expired. Renew the subscription or paste a new link.',
+              'This access link has expired. Renew the subscription or paste a new link.',
             ),
           ),
         );
@@ -1293,9 +1462,9 @@ class _HomeScreenState extends State<HomeScreen> {
       final AddServerRequest request = _addServerRequestFromConfig(config);
 
       final repository = _serverRepository;
-      final server = await repository.addNewServer(request: request);
+      final server = await _upsertImportedServer(request);
       await repository.setSelectedServerId(id: server.id);
-      await _persistAccessProfileState(config: config);
+      final savedProfiles = await _persistAccessProfileState(config: config);
       await _connectionSupervisor.clearAllServerFailures();
       await _markOnboardingSeen();
       await ImportState.setImported(true);
@@ -1304,6 +1473,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final trustedProfile = _isTrustedAccessProfileConfig(config);
       setState(() {
+        _accessProfileConfigs = savedProfiles;
         _localServers = [
           ..._localServers.where(
             (item) => !_isSameServerEndpoint(item, server),
@@ -1314,7 +1484,6 @@ class _HomeScreenState extends State<HomeScreen> {
         _selectedServerKey = _serverEndpointKey(server);
         _selectedProtocol = server.vpnProtocol;
         if (trustedProfile) {
-          _accessProfileConfig = config;
           _referralLink = _referralLinkForConfig(config);
         }
         _subscription = SubscriptionInfo(expiresAt: config.expiresAt);
@@ -1347,21 +1516,227 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   AddServerRequest _addServerRequestFromConfig(TTConfig config) {
-    final String name = (config.hostname ?? config.address ?? 'Imported server')
-        .trim();
-    final String domain = (config.hostname ?? config.address ?? '').trim();
-    final String ipAddress = (config.address ?? config.hostname ?? '').trim();
+    final String hostname = (config.hostname ?? '').trim();
+    final String address = (config.address ?? '').trim();
+    final String connectAddress = address.isNotEmpty ? address : hostname;
+    final String tlsHostname = hostname.isNotEmpty
+        ? hostname
+        : _hostOnly(connectAddress);
+    final String name = _importedServerNameForConfig(
+      hostname: tlsHostname,
+      address: connectAddress,
+    );
+    final bool trusted = SpicTrustPolicy.isTrustedEndpoint(
+      domain: tlsHostname,
+      address: connectAddress,
+    );
+    final bool btw = _isBtwEndpoint(
+      hostname: tlsHostname,
+      address: connectAddress,
+    );
+    final profileDns = config.dnsUpstreams
+        .map((value) => value.trim())
+        .where((value) => value.isNotEmpty)
+        .toList(growable: false);
+    final dnsServers = trusted
+        ? profileDns.isNotEmpty
+              ? profileDns
+              : SpicConnectionSupervisor.spicTunnelDnsUpstreams
+        : profileDns;
 
     return ServerData.empty(
       name: name.isEmpty ? 'Imported server' : name,
-      ipAddress: ipAddress,
-      domain: domain,
+      ipAddress: connectAddress,
+      domain: tlsHostname,
       username: config.username!.trim(),
       password: config.password!.trim(),
-      vpnProtocol: _selectedProtocol,
+      vpnProtocol: btw ? VpnProtocol.http2 : _selectedProtocol,
       routingProfileId: kDefaultRoutingProfileId,
-      dnsServers: const ['1.1.1.1'],
+      dnsServers: dnsServers,
+      ipv6: !btw,
+      postQuantumGroupEnabled: !btw,
     );
+  }
+
+  Future<Server> _upsertImportedServer(ServerData request) async {
+    final allServers = await _serverRepository.getAllServers();
+    final requestServer = Server(id: '_import', serverData: request);
+    final matchingServers = allServers
+        .where((server) => _isSameServerEndpoint(server, requestServer))
+        .toList(growable: false);
+
+    if (matchingServers.isNotEmpty) {
+      final existingServer = _serverToKeepForDuplicateGroup(matchingServers);
+      await _serverRepository.setNewServer(
+        id: existingServer.id,
+        request: request,
+      );
+      await _removeDuplicateServers(
+        matchingServers,
+        keepServerId: existingServer.id,
+      );
+      return existingServer.copyWith(serverData: request);
+    }
+
+    final server = await _serverRepository.addNewServer(request: request);
+    await _deduplicatePersistedServers(keepServerId: server.id);
+    return server;
+  }
+
+  Future<void> _deduplicatePersistedServers({String? keepServerId}) async {
+    final allServers = await _serverRepository.getAllServers();
+    final groupedServers = <String, List<Server>>{};
+    for (final server in allServers) {
+      final key = _serverEndpointKey(server);
+      if (key.startsWith('id:')) {
+        continue;
+      }
+      (groupedServers[key] ??= <Server>[]).add(server);
+    }
+
+    for (final duplicateGroup in groupedServers.values) {
+      if (duplicateGroup.length < 2) {
+        continue;
+      }
+
+      final serverToKeep = keepServerId == null
+          ? _serverToKeepForDuplicateGroup(duplicateGroup)
+          : duplicateGroup.firstWhere(
+              (server) => server.id == keepServerId,
+              orElse: () => _serverToKeepForDuplicateGroup(duplicateGroup),
+            );
+      await _removeDuplicateServers(
+        duplicateGroup,
+        keepServerId: serverToKeep.id,
+      );
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _localServers = _dedupeServersForDisplay(_localServers);
+    });
+  }
+
+  Server _serverToKeepForDuplicateGroup(List<Server> duplicateGroup) {
+    return duplicateGroup.firstWhere(
+      (server) => server.selected || server.id == _selectedServerId,
+      orElse: () => duplicateGroup.last,
+    );
+  }
+
+  Future<void> _removeDuplicateServers(
+    Iterable<Server> servers, {
+    required String keepServerId,
+  }) async {
+    for (final server in servers) {
+      if (server.id == keepServerId) {
+        continue;
+      }
+
+      try {
+        await _serverRepository.removeServer(serverId: server.id);
+      } catch (error, stackTrace) {
+        debugPrint('Failed to remove duplicate server ${server.id}: $error');
+        debugPrintStack(stackTrace: stackTrace);
+      }
+    }
+  }
+
+  String _importedServerNameForConfig({
+    required String hostname,
+    required String address,
+  }) {
+    final hostnameLower = hostname.toLowerCase();
+    final addressLower = SpicConnectionSupervisor.normalizedEndpointAddress(
+      address,
+    );
+    if (addressLower == '185.236.24.249:18445' ||
+        hostnameLower == 'home.stop2virus.xyz' &&
+            addressLower.endsWith(':18445')) {
+      return 'BW Router Gateway';
+    }
+
+    if (addressLower == '185.236.24.249:8443' ||
+        hostnameLower == 'home.stop2virus.xyz' &&
+            addressLower.endsWith(':8443')) {
+      return 'BW Pro Gateway';
+    }
+
+    final display = hostname.isNotEmpty ? hostname : address;
+    return display.isEmpty ? 'Imported server' : display;
+  }
+
+  bool _isBtwEndpoint({required String hostname, required String address}) {
+    final normalizedAddress =
+        SpicConnectionSupervisor.normalizedEndpointAddress(address);
+    final normalizedHostname = hostname.trim().toLowerCase();
+    return normalizedAddress == '185.236.24.249:8443' ||
+        normalizedAddress == '185.236.24.249:18445' ||
+        normalizedHostname == 'home.stop2virus.xyz' &&
+            (normalizedAddress.endsWith(':8443') ||
+                normalizedAddress.endsWith(':18445'));
+  }
+
+  bool _isBtwServer(Server server) {
+    return SpicConnectionSupervisor.isBtwServer(server);
+  }
+
+  String _serverDisplayName(Server server) {
+    if (!_isBtwServer(server)) {
+      return server.name;
+    }
+
+    final name = server.name.trim();
+    if (name.toUpperCase().contains('PRO')) {
+      return name;
+    }
+
+    if (name == 'BtW Home Gateway' || name == 'BtW PRO Home Gateway') {
+      return 'BW Pro Gateway';
+    }
+
+    return name.isEmpty ? 'BW Pro Gateway' : name;
+  }
+
+  Widget _serverLeading(Server server, String flag, ColorScheme scheme) {
+    if (!_isBtwServer(server)) {
+      return Text(flag, style: const TextStyle(fontSize: 22));
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(7),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF121826), Color(0xFF1BA784)],
+        ),
+        border: Border.all(color: scheme.primary.withValues(alpha: 0.35)),
+      ),
+      child: const Text(
+        'PRO',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 10,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0,
+        ),
+      ),
+    );
+  }
+
+  String _hostOnly(String endpoint) {
+    final raw = endpoint.trim();
+    if (raw.isEmpty) return '';
+
+    final uri = Uri.tryParse('tcp://$raw');
+    if (uri != null && uri.host.isNotEmpty) {
+      return uri.host;
+    }
+
+    return raw.split(':').first.trim();
   }
 
   String _formatImportError(Object error) {
@@ -1417,6 +1792,51 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _hotSwitchToServer({
+    required VpnController vpn,
+    required Server server,
+  }) async {
+    if (!mounted || _isActionInFlight) {
+      return;
+    }
+
+    if (_busyStates.contains(vpn.state)) {
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        const SnackBar(content: Text('Route saved. Reconnect in progress.')),
+      );
+      return;
+    }
+
+    setState(() => _isActionInFlight = true);
+    _connectionSupervisor.markReconnectingSecurely();
+
+    try {
+      await vpn.stop();
+      await Future<void>.delayed(const Duration(milliseconds: 350));
+      if (!mounted) return;
+
+      await _connectToServer(vpn: vpn, server: server);
+      if (!mounted) return;
+
+      ScaffoldMessenger.maybeOf(
+        context,
+      )?.showSnackBar(SnackBar(content: Text('Switched to ${server.name}')));
+    } catch (error, stackTrace) {
+      await _connectionSupervisor.rememberServerFailure(server);
+      debugPrint('SPIC hot server switch failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      if (!mounted) return;
+
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        const SnackBar(content: Text('Could not switch server. Try again.')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isActionInFlight = false);
+      }
+    }
+  }
+
   Future<void> _handleConnectionToggle({
     required BuildContext context,
     required VpnController vpn,
@@ -1433,9 +1853,9 @@ class _HomeScreenState extends State<HomeScreen> {
     if (isBusy) return;
 
     if (!isConnected && !_hasImportedProfile) {
-      ScaffoldMessenger.maybeOf(
-        context,
-      )?.showSnackBar(const SnackBar(content: Text('Import tt:// link first')));
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        const SnackBar(content: Text('Import access link first')),
+      );
       _showImportBottomSheet();
       return;
     }
@@ -1444,18 +1864,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ScaffoldMessenger.maybeOf(context)?.showSnackBar(
         SnackBar(
           content: Text(
-            hasServers ? 'Select server first' : 'Open tt:// link first',
-          ),
-        ),
-      );
-      return;
-    }
-
-    if (!isConnected && _subscription.isExpired) {
-      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Subscription expired. Renew SPIC or enter a new tt:// link.',
+            hasServers ? 'Select server first' : 'Add access link first',
           ),
         ),
       );
@@ -1466,10 +1875,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       if (isConnected) {
+        _postConnectVerificationGeneration++;
         await vpn.stop();
         _connectionSupervisor.resetForDisconnect();
       } else {
-        targetSelection = await _connectionSupervisor.selectSmartServer(
+        targetSelection = _connectionSupervisor.selectImmediateServer(
           effectiveServers: effectiveServers,
           selected: selected,
           preferredProtocol: _selectedProtocol,
@@ -1486,6 +1896,17 @@ class _HomeScreenState extends State<HomeScreen> {
           return;
         }
 
+        if (_subscriptionForServer(targetServer).isExpired) {
+          ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Subscription expired. Renew SPIC or enter a new access link.',
+              ),
+            ),
+          );
+          return;
+        }
+
         _selectedProtocol =
             targetSelection?.protocol ?? targetServer.vpnProtocol;
         await _connectToServer(vpn: vpn, server: targetServer);
@@ -1496,9 +1917,9 @@ class _HomeScreenState extends State<HomeScreen> {
       }
       if (!mounted) return;
 
-      ScaffoldMessenger.maybeOf(
-        this.context,
-      )?.showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.maybeOf(this.context)?.showSnackBar(
+        const SnackBar(content: Text('Could not connect. Try again.')),
+      );
     } finally {
       if (mounted) {
         setState(() => _isActionInFlight = false);
@@ -1520,7 +1941,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: FilledButton.icon(
             onPressed: _showImportBottomSheet,
             icon: const Icon(Icons.add_link),
-            label: const Text('Import tt:// to load servers'),
+            label: const Text('Import access link to load servers'),
           ),
         ),
       );
@@ -1531,7 +1952,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     if (effectiveServers.isEmpty && servers.error != null) {
-      return Center(child: Text('Error: ${servers.error}'));
+      return const Center(child: Text('Could not load servers'));
     }
 
     if (effectiveServers.isEmpty) {
@@ -1541,7 +1962,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: OutlinedButton.icon(
             onPressed: _showImportBottomSheet,
             icon: const Icon(Icons.add_link),
-            label: const Text('Import tt://'),
+            label: const Text('Import access link'),
           ),
         ),
       );
@@ -1607,9 +2028,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         horizontal: 12,
                       ),
                       minLeadingWidth: 32,
-                      leading: Text(flag, style: const TextStyle(fontSize: 22)),
+                      leading: _serverLeading(server, flag, scheme),
                       title: Text(
-                        server.name,
+                        _serverDisplayName(server),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -1646,14 +2067,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                       onTap: isCoolingDown || (!hasCredentials && !isExternal)
                           ? null
-                          : () {
+                          : () async {
                               if (!hasCredentials && isExternal) {
                                 ScaffoldMessenger.maybeOf(
                                   context,
                                 )?.showSnackBar(
                                   const SnackBar(
                                     content: Text(
-                                      'Import this external tt:// link first.',
+                                      'Import this external access link first.',
                                     ),
                                   ),
                                 );
@@ -1661,16 +2082,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                 return;
                               }
 
+                              final vpn = VpnScope.vpnControllerOf(
+                                context,
+                                listen: false,
+                              );
+                              final wasConnected =
+                                  vpn.state == VpnState.connected;
                               setState(() {
                                 _selectedServerId = server.id;
                                 _selectedServerKey = _serverEndpointKey(server);
                                 _selectedProtocol = server.vpnProtocol;
                               });
+                              await _connectionSupervisor.setRouteMode(
+                                SpicRouteMode.manual,
+                              );
 
                               if (servers.servers.any(
                                 (item) => item.id == server.id,
                               )) {
                                 servers.pickServer(server.id);
+                              }
+
+                              if (wasConnected && mounted) {
+                                await _hotSwitchToServer(
+                                  vpn: vpn,
+                                  server: server,
+                                );
                               }
                             },
                     );
@@ -1697,9 +2134,11 @@ class _HomeScreenState extends State<HomeScreen> {
     required Server server,
   }) async {
     final selectedServerKey = _serverEndpointKey(server);
+    final verificationGeneration = ++_postConnectVerificationGeneration;
     final policyServer = _connectionSupervisor.applyPolicy(
       server,
       protocol: _selectedProtocol,
+      antiDpiEnabled: _antiDpiEnabled,
     );
     if (mounted) {
       setState(() {
@@ -1757,21 +2196,46 @@ class _HomeScreenState extends State<HomeScreen> {
 
       _connectionSupervisor.markAccessRejected();
       final rejectionText = _isTrustedSpicServer(server)
-          ? 'Access rejected. Import a fresh SPIC tt:// link.'
-          : 'External route rejected. Import its fresh tt:// link.';
+          ? 'Access rejected. Import a fresh SPIC access link.'
+          : 'External route rejected. Import its fresh access link.';
       ScaffoldMessenger.maybeOf(
         context,
       )?.showSnackBar(SnackBar(content: Text(rejectionText)));
       return;
     }
 
-    final routeProbe = await _connectionSupervisor.probeServer(
+    unawaited(
+      _runPostConnectVerification(
+        generation: verificationGeneration,
+        server: server,
+        policyServer: policyServer,
+        selectedServerKey: selectedServerKey,
+      ),
+    );
+  }
+
+  Future<void> _runPostConnectVerification({
+    required int generation,
+    required Server server,
+    required Server policyServer,
+    required String selectedServerKey,
+  }) async {
+    final routeProbeFuture = _connectionSupervisor.probeServer(
       server,
       rememberFailure: false,
       protocol: policyServer.vpnProtocol,
     );
-    final dnsOk = await _connectionSupervisor.checkDnsHealth();
+    final dnsOkFuture = _connectionSupervisor.checkDnsHealth();
+    final routeProbe = await routeProbeFuture;
+    final dnsOk = await dnsOkFuture;
     if (!mounted) return;
+
+    final vpn = VpnScope.vpnControllerOf(context, listen: false);
+    if (generation != _postConnectVerificationGeneration ||
+        vpn.state != VpnState.connected ||
+        _selectedServerKey != selectedServerKey) {
+      return;
+    }
 
     await _connectionSupervisor.completeConnectionVerification(
       server: server,
@@ -1823,24 +2287,21 @@ class _HomeScreenState extends State<HomeScreen> {
     required bool isCoolingDown,
     required bool isExternal,
   }) {
-    final endpoint = server.domain.trim().isNotEmpty
-        ? server.domain.trim()
-        : server.ipAddress.trim();
     if (isCoolingDown) {
-      return '$endpoint - cooling down';
+      return 'Temporarily cooling down';
     }
 
     if (isExternal) {
       return hasCredentials
-          ? '$endpoint - external, lower trust'
-          : '$endpoint - external, import tt://';
+          ? 'External route - lower trust'
+          : 'External route - import access link';
     }
 
     if (hasCredentials) {
-      return endpoint;
+      return 'SPIC verified route';
     }
 
-    return '$endpoint - import tt:// to use';
+    return 'Import access link to use';
   }
 
   Future<void> _loadBypassedAppPackages() async {
@@ -1973,7 +2434,93 @@ class _HomeScreenState extends State<HomeScreen> {
       debugPrintStack(stackTrace: stackTrace);
       if (!mounted) return;
       ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-        SnackBar(content: Text('Saved. Reconnect VPN manually: $error')),
+        const SnackBar(
+          content: Text('Saved. Reconnect VPN manually to apply.'),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isActionInFlight = false);
+      }
+    }
+  }
+
+  Future<void> _setAntiDpiEnabled({
+    required bool enabled,
+    required VpnController vpn,
+    required Server? selectedServer,
+  }) async {
+    final previousValue = _antiDpiEnabled;
+    setState(() => _antiDpiEnabled = enabled);
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_antiDpiEnabledPrefsKey, enabled);
+
+      if (vpn.state == VpnState.connected && selectedServer != null) {
+        await _restartVpnToApplyConfigChange(
+          vpn: vpn,
+          selectedServer: selectedServer,
+          message: enabled ? 'Anti-DPI enabled' : 'Anti-DPI disabled',
+        );
+      } else if (mounted) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          SnackBar(
+            content: Text(
+              enabled
+                  ? 'Anti-DPI will apply on next connect'
+                  : 'Anti-DPI disabled',
+            ),
+          ),
+        );
+      }
+    } catch (error, stackTrace) {
+      debugPrint('Failed to update Anti-DPI: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      if (!mounted) return;
+
+      setState(() => _antiDpiEnabled = previousValue);
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        const SnackBar(content: Text('Could not update Anti-DPI. Try again.')),
+      );
+    }
+  }
+
+  Future<void> _restartVpnToApplyConfigChange({
+    required VpnController vpn,
+    required Server selectedServer,
+    required String message,
+  }) async {
+    if (_busyStates.contains(vpn.state)) {
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        const SnackBar(content: Text('Saved. Reconnect VPN to apply.')),
+      );
+      return;
+    }
+
+    setState(() => _isActionInFlight = true);
+    _connectionSupervisor.markReconnectingSecurely();
+
+    try {
+      await vpn.stop();
+      await Future<void>.delayed(const Duration(milliseconds: 350));
+      if (!mounted) return;
+
+      await _connectToServer(vpn: vpn, server: selectedServer);
+      if (!mounted) return;
+
+      ScaffoldMessenger.maybeOf(
+        context,
+      )?.showSnackBar(SnackBar(content: Text(message)));
+    } catch (error, stackTrace) {
+      debugPrint('Failed to restart VPN after config change: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      if (!mounted) return;
+
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        const SnackBar(
+          content: Text('Saved. Reconnect VPN manually to apply.'),
+        ),
       );
     } finally {
       if (mounted) {
@@ -2005,7 +2552,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Import tt:// link',
+                  'Import access link',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 12),
@@ -2027,7 +2574,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     }
                   },
                   decoration: const InputDecoration(
-                    labelText: 'tt:// link',
+                    labelText: 'Access link',
                     hintText: 'tt://?...',
                     border: OutlineInputBorder(),
                     filled: true,
@@ -2124,9 +2671,9 @@ class _HomeScreenState extends State<HomeScreen> {
       await _connectToServer(vpn: vpn, server: server);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.maybeOf(
-        context,
-      )?.showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        const SnackBar(content: Text('Could not reconnect. Try again.')),
+      );
     } finally {
       if (mounted) {
         setState(() => _isActionInFlight = false);

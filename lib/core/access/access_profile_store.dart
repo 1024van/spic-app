@@ -42,10 +42,11 @@ class AccessProfileStore {
     return mergedProfiles;
   }
 
-  Future<void> saveProfile(TTConfig config) async {
+  Future<List<TTConfig>> saveProfile(TTConfig config) async {
     final profiles = await _readSecureProfiles();
     final mergedProfiles = _mergeProfiles([...profiles, config]);
     await _writeSecureProfiles(mergedProfiles);
+    return mergedProfiles;
   }
 
   Future<List<TTConfig>> _readSecureProfiles() async {
@@ -114,12 +115,31 @@ class AccessProfileStore {
   }
 
   String _profileKey(TTConfig config) {
-    final hostname = config.hostname?.trim().toLowerCase();
-    if (hostname != null && hostname.isNotEmpty) {
-      return 'domain:$hostname';
+    final address = config.address?.trim().toLowerCase();
+    if (address != null && address.isNotEmpty) {
+      return 'address:${_normalizeEndpointAddress(address)}';
     }
 
-    final address = config.address?.trim().toLowerCase();
-    return address == null || address.isEmpty ? 'unknown' : 'host:$address';
+    final hostname = config.hostname?.trim().toLowerCase();
+    if (hostname != null && hostname.isNotEmpty) {
+      return 'tls:$hostname';
+    }
+
+    return 'unknown';
+  }
+
+  String _normalizeEndpointAddress(String value) {
+    final raw = value.trim().toLowerCase();
+    if (raw.isEmpty) {
+      return raw;
+    }
+
+    final uri = Uri.tryParse('tcp://$raw');
+    if (uri != null && uri.host.isNotEmpty) {
+      final host = uri.host.contains(':') ? '[${uri.host}]' : uri.host;
+      return '$host:${uri.hasPort ? uri.port : 443}';
+    }
+
+    return raw;
   }
 }

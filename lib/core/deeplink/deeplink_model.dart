@@ -6,6 +6,7 @@ class TTConfig {
   final DateTime? expiresAt;
   final String? subscriptionId;
   final String? userId;
+  final List<String> dnsUpstreams;
 
   TTConfig({
     this.hostname,
@@ -15,6 +16,7 @@ class TTConfig {
     this.expiresAt,
     this.subscriptionId,
     this.userId,
+    this.dnsUpstreams = const [],
   });
 
   factory TTConfig.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class TTConfig {
           : DateTime.tryParse('$expiresAtRaw')?.toLocal(),
       subscriptionId: _readString(json['subscriptionId']),
       userId: _readString(json['userId']),
+      dnsUpstreams: _readStringList(json['dnsUpstreams']),
     );
   }
 
@@ -52,10 +55,22 @@ class TTConfig {
     if (expiresAt != null) 'expiresAt': expiresAt!.toUtc().toIso8601String(),
     if (subscriptionId != null) 'subscriptionId': subscriptionId,
     if (userId != null) 'userId': userId,
+    if (dnsUpstreams.isNotEmpty) 'dnsUpstreams': dnsUpstreams,
   };
 
   static String? _readString(Object? value) {
     final text = value?.toString().trim();
     return text == null || text.isEmpty ? null : text;
+  }
+
+  static List<String> _readStringList(Object? value) {
+    if (value is! Iterable) {
+      return const [];
+    }
+
+    return value
+        .map((item) => item.toString().trim())
+        .where((item) => item.isNotEmpty)
+        .toList(growable: false);
   }
 }
